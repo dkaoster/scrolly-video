@@ -41,7 +41,7 @@ export default {
     file: "dist/scrolly-video.js",
   },
   plugins: [
-    copy({
+    !production && copy({
       targets: [
         { src: "public/**/*", dest: "dist" },
       ],
