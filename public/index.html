@@ -4,15 +4,50 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <title>svelte-webcomponent-boilerplate</title>
-
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <title>scrolly-video dev page</title>
 
   <script defer src="scrolly-video.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 300vh;
+      display: block;
+    }
+
+    .scrolly-video {
+      display: block;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+
+  <script>
+    const updateScrollPercentage = () => {
+      const heightOfWindow = window.innerHeight;
+      const contentScrolled = window.scrollY;
+      const bodyHeight = document.body.offsetHeight;
+
+      const scrollyVideo = document.getElementById('scrolly-video');
+      scrollyVideo.setCurrentTimePercent(contentScrolled / (bodyHeight - heightOfWindow));
+    }
+
+    window.addEventListener('scroll', updateScrollPercentage);
+  </script>
 </head>
 
 <body>
-<scrolly-video header="make" flip="svelte,webcomponents,opensource" footer="awesome!"></scrolly-video>
+<scrolly-video
+  id="scrolly-video"
+  class="scrolly-video cover"
+  src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4"
+/>
 </body>
 </html>
