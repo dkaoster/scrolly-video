@@ -10,12 +10,10 @@ import { spawn } from "child_process";
 const watch = process.env.ROLLUP_WATCH === 'true';
 const production = !watch;
 
-function serve() {
+const serve = () => {
   let server;
 
-  function toExit() {
-    if (server) server.kill(0);
-  }
+  const toExit = () => { if (server) server.kill(0); }
 
   return {
     writeBundle() {
@@ -43,9 +41,15 @@ export default {
   plugins: [
     !production && copy({
       targets: [
+        // The public folder for development
         { src: "public/**/*", dest: "dist" },
+        // libav.js
+        { src: "node_modules/libav.js/libav-*-default.js", dest: "dist" },
+        // webcodecs polyfill
+        { src: "node_modules/libavjs-webcodecs-polyfill/libavjs-webcodecs-polyfill.min.js", dest: "dist" }
       ],
     }),
+
     svelte({
       preprocess: sveltePreprocess({
         sourceMap: !production

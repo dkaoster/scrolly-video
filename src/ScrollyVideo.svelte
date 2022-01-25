@@ -3,10 +3,16 @@
 <script>
   // transitionSpeed sets the upper limit for playbackRate.
   // Must be a number between >2 and <16.
-  export let transitionSpeed = 6;
+  export let transitionSpeed = 4;
+
+  // Allows a way to specify display options, for instance adding 'cover'
+  // will tell this component to "cover" in its container.
+  export let cover = true;
+  export let sticky = true;
+  export let full = true;
 
   // Stop the animation when we are within 0.1 seconds of the target.
-  // Close enough for floating point shenanigans
+  // Close enough for floating point video shenanigans
   const frameThreshold = 0.1;
 
   // variable to hold the DOM element
@@ -20,6 +26,30 @@
   let currentTime = 0;
   let paused = true;
   let playbackRate = 1;
+  let muted = true;
+
+  // Document status variables
+  let innerHeight = 0;
+  let scrollY = 0;
+
+  $: { if (video) {
+    // Use JS to reach up to the shadow root host and set the styles if
+    // this element is supposed to be sticky.
+    const host = video.parentNode.host;
+    if (host) {
+      if (sticky) {
+        host.style.display = 'block';
+        host.style.position = 'sticky';
+        host.style.top = 0;
+      }
+
+      if (full) {
+        host.style.width = '100%';
+        host.style.height = '100vh';
+        host.style.overflow = 'hidden';
+      }
+    }
+  }}
 
   // Recursively transition to the target time
   const transitionToTargetTime = () => {
@@ -43,13 +73,19 @@
     // Otherwise, we play the video and adjust the playbackRate to get a smoother
     // animation effect.
     else {
-      playbackRate = Math.max(Math.min((targetTime - currentTime) * 2, transitionSpeed, 16), 1);
+      playbackRate = Math.max(Math.min((targetTime - currentTime) * 4, transitionSpeed, 16), 1);
       paused = false;
     }
 
     // Recursively calls ourselves until the animation is done.
-    requestAnimationFrame(transitionToTargetTime);
+    if (typeof requestAnimationFrame === 'function')
+      requestAnimationFrame(transitionToTargetTime);
   };
+
+  const updateScrollPercentage = () => {
+    const bodyHeight = document.body.offsetHeight;
+    setCurrentTimePercent(scrollY / (bodyHeight - innerHeight));
+  }
 
   /**
    * Sets the currentTime as a number of seconds in the video.
@@ -95,14 +131,17 @@
   }
 </style>
 
+<svelte:window on:scroll={updateScrollPercentage} bind:innerHeight bind:scrollY />
+
 <video
   tabindex="0"
   preload="auto"
   autobuffer
   playsinline
-  muted
+  class:cover
   {...$$props}
   bind:this={video}
+  bind:muted
   bind:paused
   bind:currentTime
   bind:playbackRate

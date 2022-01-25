@@ -1,5 +1,7 @@
 # scrolly-video
 
+*** NOTE: THIS LIBRARY IS STILL IN EARLY DEVELOPMENT STAGES ***
+
 A webcomponent built with svelte for scroll-based (or other externally controlled) playback.
 
 ## 🚀 Installation (Web)
@@ -7,13 +9,13 @@ A webcomponent built with svelte for scroll-based (or other externally controlle
 1. Add html code to your page:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
-2. Require javascript in yourpage (before `</body>`):
+2. Require javascript in your page (before `</body>`):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js" />
 ```
 
 You can replace `@latest` with specific version, example `@1.0.0`.
@@ -26,7 +28,7 @@ Below is available a description of `options` values.
 2. Add html code to your page:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
 3. Require javascript in your app:
@@ -55,7 +57,7 @@ import "scrolly-video";
 3. Add html code to your `App.js` template:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
 ## 🔴 Installation (Angular)
@@ -70,7 +72,7 @@ import "scrolly-video";
 3. Add html code to your html component:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
 ## 🟠 Installation (Svelte)
@@ -85,7 +87,7 @@ import "scrolly-video";
 3. Add html code to your html component:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
 ## 🟢 Installation (Vue)
@@ -103,7 +105,7 @@ Vue.config.ignoredElements = ["scrolly-video"];
 3. Add html code to your html component:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```
 
 ## 🧰 Options / Attributes
@@ -118,12 +120,12 @@ Additional parameters:
 
 Additionally, there are two functions provided to set the currentTime:
 
-***setCurrentTime*** (setTime | Number): A number between 0 and video.duration that specifies the number of seconds into the video.
+***setCurrentTime*** (`setTime | Number`): A number between 0 and video.duration that specifies the number of seconds into the video.
 
-***setCurrentTimePercent*** (setPercentage | Number): A number between 0 to 1 that specifies the percentage position of the video.
+***setCurrentTimePercent*** (`setPercentage | Number`): A number between 0 and 1 that specifies the percentage position of the video.
 
 #### HTML Code with attributes:
 
 ```html
-<scrolly-video src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4" />
+<scrolly-video src="https://your-video-url.mp4" />
 ```

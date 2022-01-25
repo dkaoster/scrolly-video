@@ -32,6 +32,8 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.3",
+    "libav.js": "^3.6.4",
+    "libavjs-webcodecs-polyfill": "^0.2.8",
     "rimraf": "^3.0.2",
     "rollup": "^2.46.0",
     "rollup-plugin-copy": "^3.4.0",
