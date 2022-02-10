@@ -43,10 +43,6 @@ export default {
       targets: [
         // The public folder for development
         { src: 'public/**/*', dest: 'dist' },
-        // libav.js
-        { src: 'node_modules/libav.js/libav-*-default*', dest: 'dist' },
-        // webcodecs polyfill
-        { src: 'node_modules/libavjs-webcodecs-polyfill/libavjs-webcodecs-polyfill.min.js', dest: 'dist' },
       ],
     }),
 

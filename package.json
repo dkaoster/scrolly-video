@@ -37,8 +37,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-svelte3": "^3.4.0",
-    "libav.js": "^3.6.4",
-    "libavjs-webcodecs-polyfill": "^0.2.8",
     "mp4box": "^0.4.9",
     "rimraf": "^3.0.2",
     "rollup": "^2.46.0",

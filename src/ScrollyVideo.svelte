@@ -37,7 +37,7 @@
   // variable to hold the extracted video frames
   let videoFrames;
 
-  // The targetTime
+  // The targetTime in seconds for the video to transition to
   let targetTime = 0;
 
   // Video status variables
@@ -51,8 +51,12 @@
   let innerHeight = 0;
   let scrollY = 0;
 
+  // Webcodecs has given us frames for this video, try to go faster
+  const frames = [];
+  const emitFrame = (frame) => { frames.push(frame); };
+
   // If we want to use WebCodecs to split apart the frames.
-  $: { if (usewebcodecs) videoDecoder(src, debug).then(() => { videoFrames = true; }); }
+  $: { if (usewebcodecs) videoDecoder(src, emitFrame, debug).then(() => { videoFrames = true; }); }
 
   $: {
     if (video || canvas) {
@@ -123,7 +127,7 @@
    * @param setPercentage
    */
   export function setCurrentTimePercent(setPercentage) {
-    targetTime = Math.max(Math.min(setPercentage, 1), 0) * video.duration;
+    targetTime = Math.max(Math.min(setPercentage, 1), 0) * (frames.length || video.duration);
     if (transitioning) return;
     paused = false;
     transitioning = true;
