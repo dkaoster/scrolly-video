@@ -33,9 +33,11 @@
 
   // variable to hold the canvas element
   let canvas;
+  $: context = canvas && canvas.getContext('2d');
 
-  // variable to hold the extracted video frames
-  let videoFrames;
+  // number of videoFrames
+  let numVideoFrames = 0;
+  let frameRate = 0;
 
   // The targetTime in seconds for the video to transition to
   let targetTime = 0;
@@ -56,7 +58,13 @@
   const emitFrame = (frame) => { frames.push(frame); };
 
   // If we want to use WebCodecs to split apart the frames.
-  $: { if (usewebcodecs) videoDecoder(src, emitFrame, debug).then(() => { videoFrames = true; }); }
+  if (usewebcodecs) {
+    videoDecoder(src, emitFrame, debug).then(() => {
+      const { duration } = video;
+      numVideoFrames = frames.length;
+      frameRate = numVideoFrames / duration;
+    });
+  }
 
   $: {
     if (video || canvas) {
@@ -89,13 +97,20 @@
       return;
     }
 
-    // We can't use a negative playbackRate, so if the video needs to go backwards,
-    // We have to use the inefficient method of modifying currentTime rapidly to
-    // get an effect.
-    if (targetTime - currentTime < 0) {
+    if (canvas) {
+      const transitionForward = targetTime - currentTime;
+      currentTime += transitionForward / (8 / transitionspeed);
+      const currFrame = frames[Math.floor(currentTime * frameRate)];
+      canvas.width = currFrame.width;
+      canvas.height = currFrame.height;
+      if (currFrame) context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+    } else if (targetTime - currentTime < 0) {
+      // We can't use a negative playbackRate, so if the video needs to go backwards,
+      // We have to use the inefficient method of modifying currentTime rapidly to
+      // get an effect.
       paused = true;
       const transitionForward = targetTime - currentTime;
-      currentTime += transitionForward / transitionspeed;
+      currentTime += transitionForward / (8 / transitionspeed);
     } else {
       // Otherwise, we play the video and adjust the playbackRate to get a smoother
       // animation effect.
@@ -127,7 +142,8 @@
    * @param setPercentage
    */
   export function setCurrentTimePercent(setPercentage) {
-    targetTime = Math.max(Math.min(setPercentage, 1), 0) * (frames.length || video.duration);
+    targetTime = Math.max(Math.min(setPercentage, 1), 0)
+      * (numVideoFrames / frameRate || video.duration);
     if (transitioning) return;
     paused = false;
     transitioning = true;
@@ -162,7 +178,7 @@
 
 <svelte:window on:scroll={updateScrollPercentage} bind:innerHeight bind:scrollY />
 
-{#if usewebcodecs && videoFrames}
+{#if usewebcodecs && numVideoFrames}
   <!--
   Will automatically switch over to a canvas if using webCodecs
   and it has finished loading

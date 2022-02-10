@@ -115,12 +115,12 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
             frame.close();
           });
 
-          // If we don't get a new frame for 1s, resolve.
+          // If we don't get a new frame for 2s, resolve.
           clearTimeout(decodingFinished);
           decodingFinished = setTimeout(() => {
             decoder.close();
             resolve();
-          }, 1000);
+          }, 2000);
         },
         error: (e) => {
           console.error(e);
