@@ -110,12 +110,14 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
       // Creates a VideoDecoder instance
       const decoder = new VideoDecoder({
         output: (frame) => {
-          createImageBitmap(frame).then((bitmap) => {
-            emitFrame(bitmap);
-            frame.close();
-          });
+          createImageBitmap(frame, { resizeQuality: 'medium' })
+            .then((bitmap) => {
+              emitFrame(bitmap);
+              frame.close();
+            });
 
           // If we don't get a new frame for 2s, resolve.
+          // TODO find a smarter way of knowing how many frames we have ahead of time
           clearTimeout(decodingFinished);
           decodingFinished = setTimeout(() => {
             decoder.close();
