@@ -63,6 +63,7 @@
       const { duration } = video;
       numVideoFrames = frames.length;
       frameRate = numVideoFrames / duration;
+      if (debug) console.info('Received', numVideoFrames, 'frames');
 
       // Waits for canvas to be available, and then draws the initial image.
       const waitForCanvas = setInterval(() => {
@@ -70,9 +71,11 @@
 
         clearInterval(waitForCanvas);
         const currFrame = frames[Math.floor(currentTime * frameRate)];
-        canvas.width = currFrame.width;
-        canvas.height = currFrame.height;
-        if (currFrame) context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+        if (currFrame) {
+          canvas.width = currFrame.width;
+          canvas.height = currFrame.height;
+          context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+        }
       }, 10);
     });
   }
@@ -115,7 +118,11 @@
       const transitionForward = targetTime - currentTime;
       currentTime += transitionForward / (64 / transitionspeed);
       const currFrame = frames[Math.floor(currentTime * frameRate)];
-      if (currFrame) context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+      if (currFrame) {
+        canvas.width = currFrame.width;
+        canvas.height = currFrame.height;
+        context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+      }
     } else if (isSafari || targetTime - currentTime < 0) {
       // We can't use a negative playbackRate, so if the video needs to go backwards,
       // We have to use the inefficient method of modifying currentTime rapidly to
