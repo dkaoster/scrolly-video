@@ -5,7 +5,7 @@
 
   // transitionSpeed sets the upper limit for playbackRate.
   // Must be a number between >2 and <16.
-  export let transitionspeed = 4;
+  export let transitionspeed = 8;
 
   // Allows a way to specify display options, for instance adding 'cover'
   // will tell this component to "cover" in its container.
@@ -63,6 +63,17 @@
       const { duration } = video;
       numVideoFrames = frames.length;
       frameRate = numVideoFrames / duration;
+
+      // Waits for canvas to be available, and then draws the initial image.
+      const waitForCanvas = setInterval(() => {
+        if (!canvas) return;
+
+        clearInterval(waitForCanvas);
+        const currFrame = frames[Math.floor(currentTime * frameRate)];
+        canvas.width = currFrame.width;
+        canvas.height = currFrame.height;
+        if (currFrame) context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+      }, 10);
     });
   }
 
@@ -97,20 +108,21 @@
       return;
     }
 
+    // Detect safari
+    const isSafari = navigator.userAgent.indexOf("Safari") > -1;
+
     if (canvas) {
       const transitionForward = targetTime - currentTime;
-      currentTime += transitionForward / (8 / transitionspeed);
+      currentTime += transitionForward / (64 / transitionspeed);
       const currFrame = frames[Math.floor(currentTime * frameRate)];
-      canvas.width = currFrame.width;
-      canvas.height = currFrame.height;
       if (currFrame) context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
-    } else if (targetTime - currentTime < 0) {
+    } else if (isSafari || targetTime - currentTime < 0) {
       // We can't use a negative playbackRate, so if the video needs to go backwards,
       // We have to use the inefficient method of modifying currentTime rapidly to
       // get an effect.
       paused = true;
       const transitionForward = targetTime - currentTime;
-      currentTime += transitionForward / (8 / transitionspeed);
+      currentTime += transitionForward / (64 / transitionspeed);
     } else {
       // Otherwise, we play the video and adjust the playbackRate to get a smoother
       // animation effect.
@@ -183,7 +195,7 @@
   Will automatically switch over to a canvas if using webCodecs
   and it has finished loading
   -->
-  <canvas bind:this={canvas} />
+  <canvas class:cover bind:this={canvas} />
 {:else}
   <video
     tabindex="0"

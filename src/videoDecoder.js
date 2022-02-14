@@ -104,21 +104,37 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
       // Holds the codec value
       let codec;
 
+      // Holds the number of frames
+      let frames;
+
+      // Number of frames emitted
+      let framesEmitted = 0;
+
       // Whether we are currently decoding
       let decodingFinished;
 
       // Creates a VideoDecoder instance
       const decoder = new VideoDecoder({
         output: (frame) => {
-          createImageBitmap(frame, { resizeQuality: 'medium' })
+          createImageBitmap(frame, { resizeQuality: 'low' })
             .then((bitmap) => {
               emitFrame(bitmap);
               frame.close();
             });
 
           // If we don't get a new frame for 2s, resolve.
-          // TODO find a smarter way of knowing how many frames we have ahead of time
           clearTimeout(decodingFinished);
+
+          // If we have processed all the frames in this video, resolve.
+          framesEmitted += 1;
+          if (framesEmitted >= frames) {
+            decoder.close();
+            resolve();
+          }
+
+          // Or, set a timeout for 2 seconds, and if we haven't gotten any
+          // new frames in this time, resolve. This needs to happen cause
+          // sometimes the number of actual frames is less than nb_samples.
           decodingFinished = setTimeout(() => {
             decoder.close();
             resolve();
@@ -132,9 +148,8 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
 
       mp4boxfile.onReady = (info) => {
         if (info && info.videoTracks && info.videoTracks[0]) {
-        // eslint-disable-next-line prefer-destructuring
-          codec = info.videoTracks[0].codec;
-          if (debug) console.info('Found video with codec:', codec);
+          ({ codec, nb_samples: frames } = info.videoTracks[0]);
+          if (debug) console.info('Found video with', codec, 'codec and', frames, 'frames.');
 
           // Gets the avccbox used for reading extradata
           const avccBox = mp4boxfile.moov.traks[0].mdia.minf.stbl.stsd.entries[0].avcC;
