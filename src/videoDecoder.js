@@ -124,6 +124,7 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
             });
         },
         error: (e) => {
+          // eslint-disable-next-line no-console
           console.error(e);
           reject(e);
         },
@@ -131,7 +132,7 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
 
       mp4boxfile.onReady = (info) => {
         if (info && info.videoTracks && info.videoTracks[0]) {
-          ({ codec } = info.videoTracks[0]);
+          ([{ codec }] = info.videoTracks);
           if (debug) console.info('Video with codec:', codec);
 
           // Gets the avccbox used for reading extradata

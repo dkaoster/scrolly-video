@@ -112,7 +112,8 @@
     }
 
     // Detect safari
-    const isSafari = navigator.userAgent.indexOf("Safari") > -1;
+    // eslint-disable-next-line no-undef
+    const isSafari = navigator.userAgent.indexOf('Safari') > -1;
 
     if (canvas) {
       const transitionForward = targetTime - currentTime;
