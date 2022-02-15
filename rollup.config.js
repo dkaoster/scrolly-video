@@ -1,11 +1,11 @@
-import svelte from "rollup-plugin-svelte";
-import commonjs from "@rollup/plugin-commonjs";
-import resolve from "@rollup/plugin-node-resolve";
-import livereload from "rollup-plugin-livereload";
-import copy from "rollup-plugin-copy";
-import { terser } from "rollup-plugin-terser";
-import sveltePreprocess from "svelte-preprocess";
-import { spawn } from "child_process";
+import svelte from 'rollup-plugin-svelte';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import livereload from 'rollup-plugin-livereload';
+import copy from 'rollup-plugin-copy';
+import { terser } from 'rollup-plugin-terser';
+import sveltePreprocess from 'svelte-preprocess';
+import { spawn } from 'child_process';
 
 const watch = process.env.ROLLUP_WATCH === 'true';
 const production = !watch;
@@ -13,51 +13,47 @@ const production = !watch;
 const serve = () => {
   let server;
 
-  const toExit = () => { if (server) server.kill(0); }
+  const toExit = () => { if (server) server.kill(0); };
 
   return {
     writeBundle() {
       if (server) return;
 
       server = spawn(
-        "npm",
-        ["run", "start", "--", "--dev", "--port", 4000],
-        { stdio: ["ignore", "inherit", "inherit"], shell: true}
+        'npm',
+        ['run', 'start', '--', '--dev', '--port', 4000],
+        { stdio: ['ignore', 'inherit', 'inherit'], shell: true },
       );
 
-      process.on("SIGTERM", toExit);
-      process.on("exit", toExit);
+      process.on('SIGTERM', toExit);
+      process.on('exit', toExit);
     },
   };
-}
+};
 
 export default {
-  input: "src/index.js",
+  input: 'src/index.js',
   output: {
     sourcemap: true,
-    format: "iife",
-    file: "dist/scrolly-video.js",
+    format: 'iife',
+    file: 'dist/scrolly-video.js',
   },
   plugins: [
     !production && copy({
       targets: [
         // The public folder for development
-        { src: "public/**/*", dest: "dist" },
-        // libav.js
-        { src: "node_modules/libav.js/libav-*-default.js", dest: "dist" },
-        // webcodecs polyfill
-        { src: "node_modules/libavjs-webcodecs-polyfill/libavjs-webcodecs-polyfill.min.js", dest: "dist" }
+        { src: 'public/**/*', dest: 'dist' },
       ],
     }),
 
     svelte({
       preprocess: sveltePreprocess({
-        sourceMap: !production
+        sourceMap: !production,
       }),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production,
-        customElement: true
+        customElement: true,
       },
     }),
 
@@ -68,7 +64,7 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ["svelte"],
+      dedupe: ['svelte'],
     }),
     commonjs(),
     // In dev mode, call `npm run start` once
@@ -77,7 +73,7 @@ export default {
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    watch && livereload({ watch: "dist", delay: 200 }),
+    watch && livereload({ watch: 'dist', delay: 200 }),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
