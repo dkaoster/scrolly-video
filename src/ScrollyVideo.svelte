@@ -1,6 +1,7 @@
 <svelte:options tag="scrolly-video" />
 
 <script>
+  import UAParser from 'ua-parser-js';
   import videoDecoder from './videoDecoder';
 
   // transitionSpeed sets the upper limit for playbackRate.
@@ -56,6 +57,9 @@
   // Webcodecs has given us frames for this video, try to go faster
   const frames = [];
   const emitFrame = (frame) => { frames.push(frame); };
+
+  // Browser
+  const browserEngine = (new UAParser()).getEngine();
 
   // If we want to use WebCodecs to split apart the frames.
   if (usewebcodecs) {
@@ -113,7 +117,7 @@
 
     // Detect safari
     // eslint-disable-next-line no-undef
-    const isSafari = navigator.userAgent.indexOf('Safari') > -1;
+    const isSafari = browserEngine.name === 'WebKit';
 
     if (canvas) {
       const transitionForward = targetTime - currentTime;
