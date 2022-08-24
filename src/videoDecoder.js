@@ -208,20 +208,7 @@ export default (src, emitFrame, debug) => {
     return decodeVideo(src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug });
   }
 
-  // If our browser doesn't support WebCodecs, but we have a polyfill available
-  if (typeof LibAVWebCodecs === 'object' && typeof LibAVWebCodecs.load === 'function') {
-    if (debug) {
-      console.info(
-        'WebCodecs is not natively supported, but LibAVWebCodecs polyfill detected. Using polyfill...',
-      );
-    }
-    return ((typeof LibAV === 'object') ? LibAV.LibAV() : Promise.resolve())
-      .then(LibAVWebCodecs.load)
-      .then(() => decodeVideo(src, emitFrame, { ...LibAVWebCodecs, debug }));
-  }
-
-  // Otherwise, we do a promise reject
-  return Promise.reject(new Error(
-    'WebCodecs is not available, please try a different browser or supply the LibAVWebCodecs polyfill.',
-  ));
+  // Otherwise, resolve nothing
+  if (debug) console.info('WebCodecs is not available, please try a different browser or supply the LibAVWebCodecs polyfill.');
+  return Promise.resolve();
 };

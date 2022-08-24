@@ -17,7 +17,7 @@
   // Use the WebCodecs API for even better performance, but will only work
   // if the WebCodecs API is available, either natively in the browser or
   // via a polyfill (which is not included by default)
-  export let usewebcodecs = false;
+  export let usewebcodecs = true;
 
   // The src of the video
   export let src;
@@ -65,6 +65,7 @@
   if (usewebcodecs) {
     videoDecoder(src, emitFrame, debug).then(() => {
       const { duration } = video;
+      if (frames.length === 0) return;
       numVideoFrames = frames.length;
       frameRate = numVideoFrames / duration;
       if (debug) console.info('Received', numVideoFrames, 'frames');

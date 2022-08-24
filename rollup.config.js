@@ -21,7 +21,7 @@ const serve = () => {
 
       server = spawn(
         'npm',
-        ['run', 'start', '--', '--dev', '--port', 4000],
+        ['run', 'start', '--', '--dev', '--port', 4000, '--host'],
         { stdio: ['ignore', 'inherit', 'inherit'], shell: true },
       );
 
@@ -31,7 +31,7 @@ const serve = () => {
   };
 };
 
-export default {
+export default [{
   input: 'src/index.js',
   output: {
     sourcemap: true,
@@ -87,4 +87,43 @@ export default {
   watch: {
     clearScreen: false,
   },
-};
+},
+{
+  input: 'public/main.js',
+  output: {
+    sourcemap: true,
+    format: 'iife',
+    file: 'dist/docs.js',
+  },
+  plugins: [
+
+    svelte({
+      preprocess: sveltePreprocess({
+        sourceMap: !production,
+      }),
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production,
+      },
+    }),
+
+    // If you have external dependencies installed from
+    // npm, you'll most likely need these plugins. In
+    // some cases you'll need additional configuration -
+    // consult the documentation for details:
+    // https://github.com/rollup/plugins/tree/master/packages/commonjs
+    resolve({
+      browser: true,
+      dedupe: ['svelte'],
+    }),
+    commonjs(),
+
+    // If we're building for production (npm run build
+    // instead of npm run dev), minify
+    production && terser({
+      output: {
+        comments: false,
+      },
+    }),
+  ],
+}];
