@@ -1,9 +1,9 @@
 name: Build and Deploy
-on: push
-#  workflow_dispatch:
-#  push:
-#    branches:
-#      - main
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
