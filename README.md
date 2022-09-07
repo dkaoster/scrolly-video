@@ -1,7 +1,5 @@
 # scrolly-video
 
-*** NOTE: THIS LIBRARY IS STILL IN EARLY DEVELOPMENT STAGES ***
-
 A webcomponent built with svelte for scroll-based (or other externally controlled) playback.
 
 ## 🚀 Installation (Web)

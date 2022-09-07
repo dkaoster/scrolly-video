@@ -209,6 +209,6 @@ export default (src, emitFrame, debug) => {
   }
 
   // Otherwise, resolve nothing
-  if (debug) console.info('WebCodecs is not available, please try a different browser or supply the LibAVWebCodecs polyfill.');
+  if (debug) console.info('WebCodecs is not available in this browser.');
   return Promise.resolve();
 };
