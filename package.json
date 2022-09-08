@@ -1,6 +1,6 @@
 {
   "name": "scrolly-video",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A webcomponent built with svelte for scroll-based (or other externally controlled) playback.",
   "main": "dist/scrolly-video.js",
   "scripts": {
