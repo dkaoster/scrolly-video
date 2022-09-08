@@ -124,7 +124,7 @@
 
     if (canvas) {
       const transitionForward = targetTime - currentTime;
-      currentTime += transitionForward / (64 / transitionspeed);
+      currentTime += transitionForward / (256 / transitionspeed);
       const currFrame = frames[Math.floor(currentTime * frameRate)];
       if (currFrame) {
         canvas.width = currFrame.width;

@@ -1,5 +1,5 @@
 <div class="intro">
-  <h1>ScrollyVideo</h1>
+  <h1>ScrollyVideo.js</h1>
   <p>Responsive scrollable videos without obscure video encoding requirements.</p>
 </div>
 
@@ -15,10 +15,31 @@
       This library provides a way to easily create these kinds of scrolling video experiences, without fussing with special video encoding formats.
     </div>
   </div>
+  <div class="card-wrap">
+    <div class="card">
+      Compatible with React, Angular, Svelte, Vue, and plain HTML via webcomponents.
+    </div>
+  </div>
 </div>
 
 <div class="docs">
   <h2>ScrollyVideo Documentation</h2>
+
+  <p>
+    1. Add html code to your page:
+  </p>
+
+  <code>
+    &lt;scrolly-video src="https://your-video-url.mp4" /&gt;
+  </code>
+
+  <p>
+    2. Require javascript in your page (before `&lt;/body&gt;`):
+  </p>
+
+  <code>
+    &lt;script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js" /&gt;
+  </code>
 </div>
 
 <style>
