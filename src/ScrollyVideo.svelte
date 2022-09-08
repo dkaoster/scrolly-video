@@ -17,7 +17,7 @@
   // Use the WebCodecs API for even better performance, but will only work
   // if the WebCodecs API is available, either natively in the browser or
   // via a polyfill (which is not included by default)
-  export let usewebcodecs = false;
+  export let usewebcodecs = true;
 
   // The src of the video
   export let src;
@@ -31,6 +31,9 @@
 
   // variable to hold the DOM video element
   let video;
+
+  // variable to hold the host position
+  let host;
 
   // variable to hold the canvas element
   let canvas;
@@ -52,7 +55,6 @@
 
   // Document status variables
   let innerHeight = 0;
-  let scrollY = 0;
 
   // Webcodecs has given us frames for this video, try to go faster
   const frames = [];
@@ -65,6 +67,7 @@
   if (usewebcodecs) {
     videoDecoder(src, emitFrame, debug).then(() => {
       const { duration } = video;
+      if (frames.length === 0) return;
       numVideoFrames = frames.length;
       frameRate = numVideoFrames / duration;
       if (debug) console.info('Received', numVideoFrames, 'frames');
@@ -86,9 +89,9 @@
 
   $: {
     if (video || canvas) {
-    // Use JS to reach up to the shadow root host and set the styles if
-    // this element is supposed to be sticky.
-      const host = (video && video.parentNode.host) || (canvas && canvas.parentNode.host);
+      // Use JS to reach up to the shadow root host and set the styles if
+      // this element is supposed to be sticky.
+      host = (video && video.parentNode.host) || (canvas && canvas.parentNode.host);
       if (host) {
         if (sticky) {
           host.style.display = 'block';
@@ -121,7 +124,7 @@
 
     if (canvas) {
       const transitionForward = targetTime - currentTime;
-      currentTime += transitionForward / (64 / transitionspeed);
+      currentTime += transitionForward / (256 / transitionspeed);
       const currFrame = frames[Math.floor(currentTime * frameRate)];
       if (currFrame) {
         canvas.width = currFrame.width;
@@ -177,9 +180,12 @@
   // Used for internally setting the scroll percentage based on built-in listeners
   // TODO make this configurable
   const updateScrollPercentage = () => {
-    // eslint-disable-next-line no-undef
-    const bodyHeight = document.body.offsetHeight;
-    setCurrentTimePercent(scrollY / (bodyHeight - innerHeight));
+    if (host) {
+      const hostBoundingClientRect = host.parentNode.getBoundingClientRect();
+      setCurrentTimePercent(
+        (-hostBoundingClientRect.top) / (hostBoundingClientRect.height - innerHeight),
+      );
+    }
   };
 </script>
 
@@ -200,7 +206,7 @@
   }
 </style>
 
-<svelte:window on:scroll={updateScrollPercentage} bind:innerHeight bind:scrollY />
+<svelte:window on:scroll={updateScrollPercentage} bind:innerHeight />
 
 {#if usewebcodecs && numVideoFrames}
   <!--
@@ -209,6 +215,7 @@
   -->
   <canvas class:cover bind:this={canvas} />
 {:else}
+  <!-- svelte-ignore a11y-media-has-caption -->
   <video
     tabindex="0"
     preload="auto"

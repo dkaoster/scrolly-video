@@ -1,0 +1,40 @@
+name: Build and Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        # If you're using actions/checkout@v2 you must set persist-credentials to false
+        # in most cases for the deployment to work correctly.
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js 🔧
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      # This example project is built using npm and outputs the result to the 'build'
+      # folder. Replace with the commands required to build your project, or remove
+      # this step entirely if your site is pre-built.
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run build-docs
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The branch the action should deploy to.
+          BRANCH: gh-pages
+          # The folder the action should deploy.
+          FOLDER: build
+          # Automatically remove deleted files from the deploy branch
+          CLEAN: true

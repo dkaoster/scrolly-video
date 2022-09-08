@@ -4,9 +4,11 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
 import { terser } from 'rollup-plugin-terser';
+import css from 'rollup-plugin-css-only';
 import sveltePreprocess from 'svelte-preprocess';
 import { spawn } from 'child_process';
 
+const docsSite = process.env.DOCS_SITE === 'true';
 const watch = process.env.ROLLUP_WATCH === 'true';
 const production = !watch;
 
@@ -21,7 +23,7 @@ const serve = () => {
 
       server = spawn(
         'npm',
-        ['run', 'start', '--', '--dev', '--port', 4000],
+        ['run', 'start', '--', '--dev', '--port', 4000, '--host'],
         { stdio: ['ignore', 'inherit', 'inherit'], shell: true },
       );
 
@@ -31,60 +33,118 @@ const serve = () => {
   };
 };
 
-export default {
-  input: 'src/index.js',
-  output: {
-    sourcemap: true,
-    format: 'iife',
-    file: 'dist/scrolly-video.js',
-  },
-  plugins: [
-    !production && copy({
-      targets: [
-        // The public folder for development
-        { src: 'public/**/*', dest: 'dist' },
-      ],
-    }),
-
-    svelte({
-      preprocess: sveltePreprocess({
-        sourceMap: !production,
-      }),
-      compilerOptions: {
+export default [
+  // The config for building just the scrolly-video library
+  {
+    input: 'src/index.js',
+    output: {
+      sourcemap: !production,
+      format: 'iife',
+      file: docsSite ? 'build/scrolly-video.js' : 'dist/scrolly-video.js',
+      name: 'ScrollyVideo',
+    },
+    watch: {
+      chokidar: {
+        usePolling: true,
+      },
+    },
+    plugins: [
+      svelte({
+        preprocess: sveltePreprocess({
+          sourceMap: !production,
+        }),
+        compilerOptions: {
         // enable run-time checks when not in production
-        dev: !production,
-        customElement: true,
-      },
-    }),
+          dev: !production,
+          customElement: true,
+        },
+      }),
 
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
-    resolve({
-      browser: true,
-      dedupe: ['svelte'],
-    }),
-    commonjs(),
-    // In dev mode, call `npm run start` once
-    // the bundle has been generated
-    watch && serve(),
+      // If you have external dependencies installed from
+      // npm, you'll most likely need these plugins. In
+      // some cases you'll need additional configuration -
+      // consult the documentation for details:
+      // https://github.com/rollup/plugins/tree/master/packages/commonjs
+      resolve({
+        browser: true,
+        dedupe: ['svelte'],
+      }),
+      commonjs(),
 
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
-    watch && livereload({ watch: 'dist', delay: 200 }),
+      // Watch the `src` directory and refresh the
+      // browser on changes when not in production
+      watch && livereload({ watch: 'src', delay: 200 }),
 
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
-    production && terser({
-      output: {
-        comments: false,
-      },
-    }),
-  ],
-
-  watch: {
-    clearScreen: false,
+      // If we're building for production (npm run build
+      // instead of npm run dev), minify
+      production && terser({
+        output: {
+          comments: false,
+        },
+      }),
+    ],
   },
-};
+  // The config for building the scrolly-video library and the docs site,
+  // with a watcher in dev mode
+  docsSite && {
+    input: 'public/main.js',
+    output: {
+      sourcemap: !production,
+      format: 'iife',
+      file: 'build/docs.js',
+      name: 'docs',
+    },
+    watch: {
+      chokidar: {
+        usePolling: true,
+      },
+    },
+    plugins: [
+      copy({
+        targets: [
+          // The public folder for development
+          { src: ['static/**/*', 'static/.nojekyll'], dest: 'build' },
+        ],
+      }),
+
+      svelte({
+        preprocess: sveltePreprocess({
+          sourceMap: !production,
+        }),
+        compilerOptions: {
+        // enable run-time checks when not in production
+          dev: !production,
+        },
+      }),
+
+      // Takes out css into separate file
+      css({ output: 'bundle.css' }),
+
+      // If you have external dependencies installed from
+      // npm, you'll most likely need these plugins. In
+      // some cases you'll need additional configuration -
+      // consult the documentation for details:
+      // https://github.com/rollup/plugins/tree/master/packages/commonjs
+      resolve({
+        browser: true,
+        dedupe: ['svelte'],
+      }),
+      commonjs(),
+
+      // In dev mode, call `npm run start` once
+      // the bundle has been generated
+      watch && serve(),
+
+      // Watch the `public` directory and refresh the
+      // browser on changes when not in production
+      watch && livereload({ watch: 'public', delay: 200 }),
+
+      // If we're building for production (npm run build
+      // instead of npm run dev), minify
+      production && terser({
+        output: {
+          comments: false,
+        },
+      }),
+    ],
+  }].filter((d) => d);
