@@ -103,7 +103,7 @@ export default [
       copy({
         targets: [
           // The public folder for development
-          { src: ['static/**/*', 'static/.nojekyll'], dest: 'build' },
+          { src: ['static/**/*', 'static/.nojekyll', 'README.md'], dest: 'build' },
         ],
       }),
 
