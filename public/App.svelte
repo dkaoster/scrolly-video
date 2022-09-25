@@ -1,78 +1,16 @@
-<div class="intro">
-  <h1>ScrollyVideo.js</h1>
-  <p>Responsive scrollable videos without obscure video encoding requirements.</p>
-</div>
+<script>
+  import { setContext } from 'svelte';
+  import Landing from './Landing.svelte';
+  import ScrollyVideoDemo from './ScrollyVideoDemo.svelte';
+  import Docs from './Docs.svelte';
 
-<div class="video-container">
-  {@html '<scrolly-video src="goldengate.mp4" usewebcodecs="true" debug="true" />'}
-  <div class="card-wrap">
-    <div class="card">
-      You've likely seen this kind of animating video before in visual journalism, marketing materials, or other websites.
-    </div>
-  </div>
-  <div class="card-wrap">
-    <div class="card">
-      This library provides a way to easily create these kinds of scrolling video experiences, without fussing with special video encoding formats.
-    </div>
-  </div>
-  <div class="card-wrap">
-    <div class="card">
-      Compatible with React, Angular, Svelte, Vue, and plain HTML via webcomponents.
-    </div>
-  </div>
-</div>
+  // eslint-disable-next-line no-undef
+  const npm = fetch('https://registry.npmjs.org/scrolly-video')
+    .then((res) => res.json());
 
-<div class="docs">
-  <h2>ScrollyVideo Documentation</h2>
+  setContext('npm', npm);
+</script>
 
-  <p>
-    1. Add html code to your page:
-  </p>
-
-  <code>
-    &lt;scrolly-video src="https://your-video-url.mp4" /&gt;
-  </code>
-
-  <p>
-    2. Require javascript in your page (before `&lt;/body&gt;`):
-  </p>
-
-  <code>
-    &lt;script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js" /&gt;
-  </code>
-</div>
-
-<style>
-  .intro {
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .video-container {
-    position: relative;
-  }
-
-  .card-wrap {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    z-index: 1;
-    position: relative;
-  }
-
-  .card {
-    background-color: white;
-    padding: 24px;
-    color: black;
-    max-width: 400px;
-  }
-
-  .docs {
-    margin: 4em auto;
-    width: 800px;
-  }
-</style>
+<Landing />
+<ScrollyVideoDemo />
+<Docs />
