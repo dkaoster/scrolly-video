@@ -1,10 +1,9 @@
-import "scrolly-video";
-import './App.css';
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
 
 function App() {
   return (
-    <div className="App">
-      <scrolly-video src="https://scrollyvideo.js.org/goldengate.mp4" sticky={false} full={false} />
+    <div className={'scrolly-container'} style={{ height: '300vh' }}>
+      <ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 {
   "name": "scrolly-video",
   "version": "0.0.2",
-  "description": "A webcomponent built with svelte for scroll-based (or other externally controlled) playback.",
+  "description": "A component for scroll-based (or other externally controlled) playback.",
   "main": "dist/scrolly-video.js",
   "scripts": {
     "dev": "DOCS_SITE=true rollup -c -w",
@@ -21,8 +21,10 @@
     "scroll",
     "scrollytelling",
     "video",
-    "webcomponent",
-    "svelte"
+    "svelte",
+    "react",
+    "vue",
+    "angular"
   ],
   "author": "Daniel Kao",
   "license": "MIT",
@@ -31,6 +33,10 @@
   },
   "homepage": "https://github.com/dkaoster/scrolly-video#readme",
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-react": "^7.10.4",
+    "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "eslint": "^8.7.0",

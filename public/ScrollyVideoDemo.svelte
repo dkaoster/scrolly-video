@@ -1,13 +1,15 @@
 <script>
+  import ScrollyVideo from '../src/ScrollyVideo.svelte';
+  
   const cards = [
     'This kind of scrolling video is common in visual journalism, marketing materials, or other scrollytelling applications.',
     'This library provides a way to easily create these kinds of scrolling video experiences, without fussing with special video encoding formats.',
-    'Compatible with React, Angular, Svelte, Vue, and plain HTML via webcomponents.',
+    'Compatible with React, Angular, Svelte, Vue, and plain HTML.',
   ];
 </script>
 
 <div class="video-container">
-  {@html '<scrolly-video src="goldengate.mp4" usewebcodecs="true" debug="true" />'}
+  <ScrollyVideo src="goldengate.mp4" debug="true" />
 
   {#each cards as card}
     <div class="card-wrap">

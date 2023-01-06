@@ -1,6 +1,6 @@
 # ScrollyVideo.js
 
-A webcomponent built with svelte for scroll-based (or other externally controlled) playback.
+A component for scroll-based (or other externally controlled) playback. See `/demos` for example usages.
 
 ## 🚀 Installation (Web)
 
@@ -87,7 +87,7 @@ Add html code to your html component:
 ## 🟢 Installation (Vue)
 
 Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.vue` and add webcomponent to ignoreElements of vue config:
+Import module in your `src/App.vue` and config:
 
 ```javascript
 import Vue from "vue";
@@ -104,19 +104,18 @@ Add html code to your html component:
 
 ## 🧰 Options / Attributes
 
-Any props added to this element will are passed into a standard HTML `<video />` tag. 
-
-Additional parameters:
-
-| Parameter       | Description                                                    | Values  | Default      |
-|:----------------|:---------------------------------------------------------------|:--------|:-------------|
-| src             | The URL of the video                                           | URL     |              |
-| transitionspeed | Sets the maximum playbackRate for this video                   | Number  | 8            |
-| cover           | Forces the video to cover in it's container                    | Boolean | true         |
-| sticky          | Whether the video should have `position: sticky`               | Boolean | true         |
-| full            | Whether the video should take up the entire viewport           | Boolean | true         |
-| usewebcodecs    | Whether the library should use the webcodecs method, see below | Boolean | true         |
-| debug           | Whether to log debug information                               | Boolean | false        |
+| Parameter             | Description                                                    | Values           | Default |
+|:----------------------|:---------------------------------------------------------------|:-----------------|:--------|
+| src                   | The URL of the video (required)                                | URL              |         |
+| scrollyVideoContainer | The DOM element of the container, only used for plain js       | String / Element |         |
+| transitionSpeed       | Sets the maximum playbackRate for this video                   | Number           | 8       |
+| frameThreshold        | When to stop the video animation, in seconds                   | Number           | 0.1     |
+| cover                 | Forces the video to cover in it's container                    | Boolean          | true    |
+| sticky                | Whether the video should have `position: sticky`               | Boolean          | true    |
+| full                  | Whether the video should take up the entire viewport           | Boolean          | true    |
+| trackScroll           | Whether this object should automatically respond to scroll     |                  |         |
+| useWebCodecs          | Whether the library should use the webcodecs method, see below | Boolean          | true    |
+| debug                 | Whether to log debug information                               | Boolean          | false   |
 
 Additionally, there are two functions provided to set currentTime manually:
 

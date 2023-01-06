@@ -3,5 +3,6 @@
 
 src
 public
+demos
 
 rollup.config.js
