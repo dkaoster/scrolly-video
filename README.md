@@ -4,40 +4,25 @@ A component for scroll-based (or other externally controlled) playback. See `/de
 
 ## 🚀 Installation (Web)
 
-Add html code to your page:
+Add html container to your page:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<div id="scrolly-video"></div>
 ```
 
-Require javascript in your page (before `</body>`):
+Require javascript in your page and create the object (before `</body>`):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js" />
+<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+<script type="text/javascript">
+  new ScrollyVideo({
+    scrollyVideoContainer: "scrolly-video",
+    src: "https://scrollyvideo.js.org/goldengate.mp4"
+  });
+</script>
 ```
 
 You can replace `@latest` with specific version, example `@1.0.0`.
-
-## 📦 Installation (NPM Module - Browserify/Webpack)
-
-Install npm module: `npm install scrolly-video --save`
-Add html code to your page:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
-
-Require javascript in your app:
-
-```javascript
-require("scrolly-video");
-```
-
-or
-
-```javascript
-import "scrolly-video";
-```
 
 ## 🔵 Installation (React)
 
@@ -45,13 +30,13 @@ Install npm module with `npm install scrolly-video --save`:
 Import module in your `src/App.js` on header:
 
 ```javascript
-import "scrolly-video";
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
 ```
 
-Add html code to your `App.js` template:
+Add the component where you need it:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
 ## 🔴 Installation (Angular)
@@ -66,22 +51,22 @@ import "scrolly-video";
 Add html code to your html component:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<scrolly-video src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
 ## 🟠 Installation (Svelte)
 
 Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.svelte` on header:
+Import component in your application:
 
 ```javascript
-import "scrolly-video";
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.svelte';
 ```
 
-Add html code to your html component:
+Add the ScrollyVideo component to your application:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
 ## 🟢 Installation (Vue)
@@ -92,14 +77,12 @@ Import module in your `src/App.vue` and config:
 ```javascript
 import Vue from "vue";
 import "scrolly-video";
-
-Vue.config.ignoredElements = ["scrolly-video"];
 ```
 
 Add html code to your html component:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
 ## 🧰 Options / Attributes
@@ -117,17 +100,9 @@ Add html code to your html component:
 | useWebCodecs          | Whether the library should use the webcodecs method, see below | Boolean          | true    |
 | debug                 | Whether to log debug information                               | Boolean          | false   |
 
-Additionally, there are two functions provided to set currentTime manually:
-
-***setCurrentTime*** (`setTime | Number`): A number between 0 and `video.duration` that specifies the number of seconds into the video.
+Additionally, to set currentTime manually:
 
 ***setCurrentTimePercent*** (`setPercentage | Number`): A number between 0 and 1 that specifies the percentage position of the video.
-
-#### HTML Code with attributes:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
 
 ## Technical Details and Cross Browser Differences
 To make this library perform optimally in all browsers, three different approaches are taken to animating the video.
