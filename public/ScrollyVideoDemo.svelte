@@ -9,7 +9,7 @@
 </script>
 
 <div class="video-container">
-  <ScrollyVideo src="goldengate.mp4" debug="true" />
+  <ScrollyVideo src="goldengate.mp4" />
 
   {#each cards as card}
     <div class="card-wrap">

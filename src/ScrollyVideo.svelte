@@ -49,7 +49,7 @@
   }
 
   onDestroy(() => {
-    if (scrollyVideo.destroy) scrollyVideo.destroy();
+    if (scrollyVideo && scrollyVideo.destroy) scrollyVideo.destroy();
   });
 </script>
 

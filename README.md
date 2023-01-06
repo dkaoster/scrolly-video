@@ -1,8 +1,8 @@
 # ScrollyVideo.js
 
-A component for scroll-based (or other externally controlled) playback. See `/demos` for example usages.
+A component for scroll-based (or other externally controlled) playback. See [`/demos`](https://github.com/dkaoster/scrolly-video/tree/main/demos) for full example usages.
 
-## 🚀 Installation (Web)
+## 🚀 Web
 
 Add html container to your page:
 
@@ -22,12 +22,12 @@ Require javascript in your page and create the object (before `</body>`):
 </script>
 ```
 
-You can replace `@latest` with specific version, example `@1.0.0`.
+You can replace `@latest` with specific version, example `@0.0.2`.
 
-## 🔵 Installation (React)
+## 🔵 React
 
 Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.js` on header:
+Import component in your application:
 
 ```javascript
 import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
@@ -39,7 +39,7 @@ Add the component where you need it:
 <ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
-## 🔴 Installation (Angular)
+## 🔴 Angular
 
 Install npm module with `npm install scrolly-video --save`:
 Import module in your `app/app.modules.ts` on header:
@@ -54,7 +54,7 @@ Add html code to your html component:
 <scrolly-video src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
-## 🟠 Installation (Svelte)
+## 🟠 Svelte
 
 Install npm module with `npm install scrolly-video --save`:
 Import component in your application:
@@ -69,7 +69,7 @@ Add the ScrollyVideo component to your application:
 <ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
-## 🟢 Installation (Vue)
+## 🟢 Vue
 
 Install npm module with `npm install scrolly-video --save`:
 Import module in your `src/App.vue` and config:
@@ -96,7 +96,7 @@ Add html code to your html component:
 | cover                 | Forces the video to cover in it's container                    | Boolean          | true    |
 | sticky                | Whether the video should have `position: sticky`               | Boolean          | true    |
 | full                  | Whether the video should take up the entire viewport           | Boolean          | true    |
-| trackScroll           | Whether this object should automatically respond to scroll     |                  |         |
+| trackScroll           | Whether this object should automatically respond to scroll     | Boolean          | true    |
 | useWebCodecs          | Whether the library should use the webcodecs method, see below | Boolean          | true    |
 | debug                 | Whether to log debug information                               | Boolean          | false   |
 
