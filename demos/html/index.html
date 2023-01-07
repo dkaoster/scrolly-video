@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScrollyVideo HTML Demo</title>
+
+    <style>
+      body, html, * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+<body>
+  <div style="height: 300vh;">
+    <div id="scrolly-video"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+  <script type="text/javascript">
+    new ScrollyVideo({
+      scrollyVideoContainer: "scrolly-video",
+      src: "https://scrollyvideo.js.org/goldengate.mp4"
+    });
+  </script>
+</body>
+</html>

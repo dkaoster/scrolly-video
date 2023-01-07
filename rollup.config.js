@@ -1,5 +1,6 @@
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
+import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
@@ -35,29 +36,20 @@ const serve = () => {
 
 export default [
   // The config for building just the scrolly-video library
-  {
-    input: 'src/index.js',
+  !docsSite && {
+    input: 'src/ScrollyVideo.js',
     output: {
       sourcemap: !production,
       format: 'iife',
-      file: docsSite ? 'build/scrolly-video.js' : 'dist/scrolly-video.js',
+      file: 'dist/scrolly-video.js',
       name: 'ScrollyVideo',
     },
-    watch: {
-      chokidar: {
-        usePolling: true,
-      },
-    },
     plugins: [
-      svelte({
-        preprocess: sveltePreprocess({
-          sourceMap: !production,
-        }),
-        compilerOptions: {
-        // enable run-time checks when not in production
-          dev: !production,
-          customElement: true,
-        },
+      copy({
+        targets: [
+          // Copy the raw source code and components over to dist
+          { src: ['src/**/*'], dest: 'dist' },
+        ],
       }),
 
       // If you have external dependencies installed from
@@ -65,15 +57,8 @@ export default [
       // some cases you'll need additional configuration -
       // consult the documentation for details:
       // https://github.com/rollup/plugins/tree/master/packages/commonjs
-      resolve({
-        browser: true,
-        dedupe: ['svelte'],
-      }),
+      resolve({ browser: true }),
       commonjs(),
-
-      // Watch the `src` directory and refresh the
-      // browser on changes when not in production
-      watch && livereload({ watch: 'src', delay: 200 }),
 
       // If we're building for production (npm run build
       // instead of npm run dev), minify
@@ -82,6 +67,21 @@ export default [
           comments: false,
         },
       }),
+    ],
+  },
+  // The react component needs to be built
+  !docsSite && {
+    input: 'src/ScrollyVideo.jsx',
+    output: {
+      file: 'dist/ScrollyVideo.jsx',
+      format: 'cjs',
+    },
+    plugins: [
+      babel({
+        exclude: 'node_modules/**',
+      }),
+      resolve(),
+      commonjs(),
     ],
   },
   // The config for building the scrolly-video library and the docs site,

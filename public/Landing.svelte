@@ -10,7 +10,7 @@
     <pre>version {version}</pre>
   {/await}
   <h1>ScrollyVideo.js</h1>
-  <p>Responsive scrollable videos without obscure video encoding requirements. Compatible with React, Angular, Svelte, Vue, and plain HTML.</p>
+  <p>Responsive scrollable videos without obscure video encoding requirements. Compatible with React, Svelte, Vue, and plain HTML.</p>
   <a class="npm" target="_blank" rel="noopener noreferrer" href="https://www.npmjs.com/package/scrolly-video">npm</a>
   <a class="github" target="_blank" rel="noopener noreferrer" href="https://github.com/dkaoster/scrolly-video">github</a>
 </div>
