@@ -1,134 +1,92 @@
 # ScrollyVideo.js
 
-A webcomponent built with svelte for scroll-based (or other externally controlled) playback.
+A component for scroll-based (or other externally controlled) playback. See [`/demos`](https://github.com/dkaoster/scrolly-video/tree/main/demos) for full example usages.
 
-## 🚀 Installation (Web)
+## 🚀 Web
 
-Add html code to your page:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
-
-Require javascript in your page (before `</body>`):
+Add html container to your page:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js" />
+<div id="scrolly-video"></div>
 ```
 
-You can replace `@latest` with specific version, example `@1.0.0`.
-
-## 📦 Installation (NPM Module - Browserify/Webpack)
-
-Install npm module: `npm install scrolly-video --save`
-Add html code to your page:
+Require javascript in your page and create the object (before `</body>`):
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+<script type="text/javascript">
+  new ScrollyVideo({
+    scrollyVideoContainer: "scrolly-video",
+    src: "https://scrollyvideo.js.org/goldengate.mp4"
+  });
+</script>
 ```
 
-Require javascript in your app:
+You can replace `@latest` with specific version, example `@0.0.2`.
 
-```javascript
-require("scrolly-video");
-```
-
-or
-
-```javascript
-import "scrolly-video";
-```
-
-## 🔵 Installation (React)
+## 🔵 React
 
 Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.js` on header:
+Import component in your application:
 
 ```javascript
-import "scrolly-video";
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
 ```
 
-Add html code to your `App.js` template:
+Add the component where you need it:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
-## 🔴 Installation (Angular)
+## 🟠 Svelte
 
 Install npm module with `npm install scrolly-video --save`:
-Import module in your `app/app.modules.ts` on header:
+Import component in your application:
 
 ```javascript
-import "scrolly-video";
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.svelte';
+```
+
+Add the ScrollyVideo component to your application:
+
+```html
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
+```
+
+## 🟢 Vue
+
+Install npm module with `npm install scrolly-video --save`:
+Import module in your `src/App.vue` and config:
+
+```javascript
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.vue';
 ```
 
 Add html code to your html component:
 
 ```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
-
-## 🟠 Installation (Svelte)
-
-Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.svelte` on header:
-
-```javascript
-import "scrolly-video";
-```
-
-Add html code to your html component:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
-
-## 🟢 Installation (Vue)
-
-Install npm module with `npm install scrolly-video --save`:
-Import module in your `src/App.vue` and add webcomponent to ignoreElements of vue config:
-
-```javascript
-import Vue from "vue";
-import "scrolly-video";
-
-Vue.config.ignoredElements = ["scrolly-video"];
-```
-
-Add html code to your html component:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
 ## 🧰 Options / Attributes
 
-Any props added to this element will are passed into a standard HTML `<video />` tag. 
+| Parameter             | Description                                                    | Values           | Default |
+|:----------------------|:---------------------------------------------------------------|:-----------------|:--------|
+| src                   | The URL of the video (required)                                | URL              |         |
+| scrollyVideoContainer | The DOM element of the container, only used for plain js       | String / Element |         |
+| transitionSpeed       | Sets the maximum playbackRate for this video                   | Number           | 8       |
+| frameThreshold        | When to stop the video animation, in seconds                   | Number           | 0.1     |
+| cover                 | Forces the video to cover in it's container                    | Boolean          | true    |
+| sticky                | Whether the video should have `position: sticky`               | Boolean          | true    |
+| full                  | Whether the video should take up the entire viewport           | Boolean          | true    |
+| trackScroll           | Whether this object should automatically respond to scroll     | Boolean          | true    |
+| useWebCodecs          | Whether the library should use the webcodecs method, see below | Boolean          | true    |
+| debug                 | Whether to log debug information                               | Boolean          | false   |
 
-Additional parameters:
-
-| Parameter       | Description                                                    | Values  | Default      |
-|:----------------|:---------------------------------------------------------------|:--------|:-------------|
-| src             | The URL of the video                                           | URL     |              |
-| transitionspeed | Sets the maximum playbackRate for this video                   | Number  | 8            |
-| cover           | Forces the video to cover in it's container                    | Boolean | true         |
-| sticky          | Whether the video should have `position: sticky`               | Boolean | true         |
-| full            | Whether the video should take up the entire viewport           | Boolean | true         |
-| usewebcodecs    | Whether the library should use the webcodecs method, see below | Boolean | true         |
-| debug           | Whether to log debug information                               | Boolean | false        |
-
-Additionally, there are two functions provided to set currentTime manually:
-
-***setCurrentTime*** (`setTime | Number`): A number between 0 and `video.duration` that specifies the number of seconds into the video.
+Additionally, to set currentTime manually:
 
 ***setCurrentTimePercent*** (`setPercentage | Number`): A number between 0 and 1 that specifies the percentage position of the video.
-
-#### HTML Code with attributes:
-
-```html
-<scrolly-video src="https://your-video-url.mp4" />
-```
 
 ## Technical Details and Cross Browser Differences
 To make this library perform optimally in all browsers, three different approaches are taken to animating the video.
