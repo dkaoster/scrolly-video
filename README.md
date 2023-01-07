@@ -39,21 +39,6 @@ Add the component where you need it:
 <ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
-## 🔴 Angular
-
-Install npm module with `npm install scrolly-video --save`:
-Import module in your `app/app.modules.ts` on header:
-
-```javascript
-import "scrolly-video";
-```
-
-Add html code to your html component:
-
-```html
-<scrolly-video src="https://scrollyvideo.js.org/goldengate.mp4" />
-```
-
 ## 🟠 Svelte
 
 Install npm module with `npm install scrolly-video --save`:
@@ -75,8 +60,7 @@ Install npm module with `npm install scrolly-video --save`:
 Import module in your `src/App.vue` and config:
 
 ```javascript
-import Vue from "vue";
-import "scrolly-video";
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.vue';
 ```
 
 Add html code to your html component:

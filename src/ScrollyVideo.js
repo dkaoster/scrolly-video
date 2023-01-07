@@ -10,7 +10,7 @@ import videoDecoder from './videoDecoder';
  *                            |___/
  *
  * Responsive scrollable videos without obscure video encoding requirements.
- * Compatible with React, Angular, Svelte, Vue, and plain HTML.
+ * Compatible with React, Svelte, Vue, and plain HTML.
  */
 class ScrollyVideo {
   constructor({

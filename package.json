@@ -23,8 +23,7 @@
     "video",
     "svelte",
     "react",
-    "vue",
-    "angular"
+    "vue"
   ],
   "author": "Daniel Kao",
   "license": "MIT",

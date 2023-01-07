@@ -4,7 +4,7 @@
   const cards = [
     'This kind of scrolling video is common in visual journalism, marketing materials, or other scrollytelling applications.',
     'This library provides a way to easily create these kinds of scrolling video experiences, without fussing with special video encoding formats.',
-    'Compatible with React, Angular, Svelte, Vue, and plain HTML.',
+    'Compatible with React, Svelte, Vue, and plain HTML.',
   ];
 </script>
 
