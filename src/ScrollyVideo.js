@@ -201,6 +201,14 @@ class ScrollyVideo {
   decodeVideo() {
     if (this.useWebCodecs && this.src) {
       videoDecoder(this.src, (frame) => { this.frames.push(frame); }, this.debug)
+        .catch(() => {
+          if (this.debug) console.error('Error encountered while decoding video');
+          // Remove all decoded frames if a failure happens during decoding
+          this.frames = [];
+
+          // Force a video reload when videoDecoder fails
+          this.video.load();
+        })
         .then(() => {
           // If no frames, something went wrong
           if (this.frames.length === 0) {
@@ -224,9 +232,6 @@ class ScrollyVideo {
 
           // Paint our first frame
           this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
-        })
-        .catch(() => {
-          if (this.debug) console.error('Error encountered while decoding video');
         });
     }
   }
