@@ -224,6 +224,9 @@ class ScrollyVideo {
 
           // Paint our first frame
           this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
+        })
+        .catch(() => {
+          if (this.debug) console.error('Error encountered while decoding video');
         });
     }
   }
