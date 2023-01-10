@@ -71,18 +71,19 @@ Add html code to your html component:
 
 ## 🧰 Options / Attributes
 
-| Parameter             | Description                                                    | Values           | Default |
-|:----------------------|:---------------------------------------------------------------|:-----------------|:--------|
-| src                   | The URL of the video (required)                                | URL              |         |
-| scrollyVideoContainer | The DOM element of the container, only used for plain js       | String / Element |         |
-| transitionSpeed       | Sets the maximum playbackRate for this video                   | Number           | 8       |
-| frameThreshold        | When to stop the video animation, in seconds                   | Number           | 0.1     |
-| cover                 | Forces the video to cover in it's container                    | Boolean          | true    |
-| sticky                | Whether the video should have `position: sticky`               | Boolean          | true    |
-| full                  | Whether the video should take up the entire viewport           | Boolean          | true    |
-| trackScroll           | Whether this object should automatically respond to scroll     | Boolean          | true    |
-| useWebCodecs          | Whether the library should use the webcodecs method, see below | Boolean          | true    |
-| debug                 | Whether to log debug information                               | Boolean          | false   |
+| Parameter             | Description                                                                                              | Values           | Default |
+|:----------------------|:---------------------------------------------------------------------------------------------------------|:-----------------|:--------|
+| src                   | The URL of the video (required)                                                                          | URL              |         |
+| scrollyVideoContainer | The DOM element of the container, only used for plain js                                                 | String / Element |         |
+| transitionSpeed       | Sets the maximum playbackRate for this video                                                             | Number           | 8       |
+| frameThreshold        | When to stop the video animation, in seconds                                                             | Number           | 0.1     |
+| cover                 | Forces the video to cover in it's container                                                              | Boolean          | true    |
+| sticky                | Whether the video should have `position: sticky`                                                         | Boolean          | true    |
+| full                  | Whether the video should take up the entire viewport                                                     | Boolean          | true    |
+| trackScroll           | Whether this object should automatically respond to scroll                                               | Boolean          | true    |
+| useWebCodecs          | Whether the library should use the webcodecs method, see below                                           | Boolean          | true    |
+| videoPercentage       | Manually specify the position of the video between 0..1, only used for react, vue, and svelte components | Number           |         |
+| debug                 | Whether to log debug information                                                                         | Boolean          | false   |
 
 Additionally, to set currentTime manually:
 
