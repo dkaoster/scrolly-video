@@ -2,52 +2,37 @@
   import { onDestroy } from 'svelte';
   import ScrollyVideo from './ScrollyVideo';
 
-  // transitionSpeed sets the upper limit for playbackRate.
-  // Must be a number between >2 and <16.
-  export let transitionSpeed = 8;
-  export let frameThreshold = 0.1;
-
-  // Allows a way to specify display options, for instance adding 'cover'
-  // will tell this component to "cover" in its container.
-  export let cover = true;
-  export let sticky = true;
-  export let full = true;
-
-  // Use the WebCodecs API for even better performance, but will only work
-  // if the WebCodecs API is available, either natively in the browser or
-  // via a polyfill (which is not included by default)
-  export let useWebCodecs = true;
-
-  // The src of the video
-  export let src;
-
-  // Allow a debug flag
-  export let debug;
-
   // variable to hold the DOM element
   let scrollyVideoContainer;
 
   // variable to hold the scrollyVideo object
   let scrollyVideo;
+
+  // Store the props so we know when things change
+  let lastPropsString = '';
   
   $: {
     if (scrollyVideoContainer) {
-      // if scrollyvideo already exists and any parameter is updated, destroy and recreate.
-      if (scrollyVideo && scrollyVideo.destroy) scrollyVideo.destroy();
-      scrollyVideo = new ScrollyVideo({
-        transitionSpeed,
-        frameThreshold,
-        cover,
-        sticky,
-        full,
-        useWebCodecs,
-        src,
-        debug,
-        scrollyVideoContainer,
-      });
+      // separate out the videoPercentage prop
+      const { videoPercentage, ...restProps } = $$props;
+
+      if (JSON.stringify(restProps) !== lastPropsString) {
+        // if scrollyvideo already exists and any parameter is updated, destroy and recreate.
+        if (scrollyVideo && scrollyVideo.destroy) scrollyVideo.destroy();
+        scrollyVideo = new ScrollyVideo({ ...restProps, scrollyVideoContainer });
+
+        // Save the new props
+        lastPropsString = JSON.stringify(restProps);
+      }
+
+      // If we need to update the target time percent
+      if (scrollyVideo && typeof videoPercentage === 'number' && videoPercentage >= 0 && videoPercentage <= 1) {
+        scrollyVideo.setTargetTimePercent(videoPercentage);
+      }
     }
   }
 
+  // Cleanup the component on destroy
   onDestroy(() => {
     if (scrollyVideo && scrollyVideo.destroy) scrollyVideo.destroy();
   });

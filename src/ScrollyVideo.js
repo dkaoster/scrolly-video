@@ -26,11 +26,20 @@ class ScrollyVideo {
     debug = false, // Whether to print debug stats to the console
   }) {
     // Make sure that we have a DOM
-    if (typeof document !== 'object') throw new Error('ScrollyVideo must be initiated in a DOM context');
+    if (typeof document !== 'object') {
+      console.error('ScrollyVideo must be initiated in a DOM context');
+      return;
+    }
 
     // Make sure the basic arguments are set for scrollyvideo
-    if (!scrollyVideoContainer) throw new Error('scrollyVideoContainer must be a valid DOM object');
-    if (!src) throw new Error('Must provide valid video src to ScrollyVideo');
+    if (!scrollyVideoContainer) {
+      console.error('scrollyVideoContainer must be a valid DOM object');
+      return;
+    }
+    if (!src) {
+      console.error('Must provide valid video src to ScrollyVideo');
+      return;
+    }
 
     // Save the container. If the container is a string we get the element
     // eslint-disable-next-line no-undef
@@ -102,7 +111,7 @@ class ScrollyVideo {
     this.frameRate = 0; // Calculation of frameRate so we know which frame to paint
 
     // Add scroll listener for responding to scroll position
-    this.updateScrollPercentage = () => {
+    this.updateScrollPercentage = (jump) => {
       // Used for internally setting the scroll percentage based on built-in listeners
       const containerBoundingClientRect = this.container.parentNode.getBoundingClientRect();
 
@@ -114,12 +123,21 @@ class ScrollyVideo {
       if (this.debug) console.info('ScrollyVideo scrolled to', scrollPercent);
 
       // Set the target time percent
-      this.setTargetTimePercent(scrollPercent);
+      this.setTargetTimePercent(scrollPercent, jump);
     };
 
     // Add our event listeners for handling changes to the window or scroll
-    // eslint-disable-next-line no-undef
-    if (this.trackScroll) window.addEventListener('scroll', this.updateScrollPercentage);
+    if (this.trackScroll) {
+      // eslint-disable-next-line no-undef
+      window.addEventListener('scroll', () => this.updateScrollPercentage());
+
+      // Set the initial scroll percentage
+      this.video.addEventListener(
+        'loadedmetadata',
+        () => this.updateScrollPercentage(true),
+        { once: true },
+      );
+    }
 
     // Add resize function
     this.resize = () => {
@@ -132,6 +150,7 @@ class ScrollyVideo {
 
     // eslint-disable-next-line no-undef
     window.addEventListener('resize', this.resize);
+    this.video.addEventListener('progress', this.resize);
 
     // Calls decode video to attempt webcodecs method
     this.decodeVideo();
@@ -157,8 +176,9 @@ class ScrollyVideo {
         width: containerWidth, height: containerHeight,
       } = this.container.getBoundingClientRect();
 
-      // Gets the width and height of the element
-      const { width, height } = el.getBoundingClientRect();
+      // Gets the width and height of the video frames
+      const width = el.videoWidth || el.width;
+      const height = el.videoHeight || el.height;
 
       if (this.debug) console.info('Container dimensions:', [containerWidth, containerHeight]);
       if (this.debug) console.info('Element dimensions:', [width, height]);
@@ -241,8 +261,10 @@ class ScrollyVideo {
 
   /**
    * Transitions the video or the canvas to the proper frame
+   *
+   * @param jump
    */
-  transitionToTargetTime() {
+  transitionToTargetTime(jump) {
     if (this.debug) {
       console.info('Transitioning targetTime:', this.targetTime, 'currentTime:', this.currentTime);
     }
@@ -252,8 +274,6 @@ class ScrollyVideo {
     if (
       // eslint-disable-next-line no-restricted-globals
       isNaN(this.targetTime)
-      // If target time is greater than the video duration we can stop
-      || this.targetTime > this.video.duration
       // If the currentTime is already close enough to the targetTime
       || Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
     ) {
@@ -262,19 +282,27 @@ class ScrollyVideo {
       return;
     }
 
+    // Make sure we don't go out of time bounds
+    if (this.targetTime > this.video.duration) this.targetTime = this.video.duration;
+    if (this.targetTime < 0) this.targetTime = 0;
+
     // How far forward we need to transition
     const transitionForward = this.targetTime - this.currentTime;
 
     if (this.canvas) {
       // Update currentTime and paint the closest frame
       this.currentTime += transitionForward / (256 / this.transitionSpeed);
+      // If jump, we go directly to the frame
+      if (jump) this.currentTime = this.targetTime;
       this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
-    } else if (this.isSafari || this.targetTime - this.currentTime < 0) {
+    } else if (jump || this.isSafari || this.targetTime - this.currentTime < 0) {
       // We can't use a negative playbackRate, so if the video needs to go backwards,
       // We have to use the inefficient method of modifying currentTime rapidly to
       // get an effect.
       this.video.pause();
       this.currentTime += transitionForward / (64 / this.transitionSpeed);
+      // If jump, we go directly to the frame
+      if (jump) this.currentTime = this.targetTime;
       this.video.currentTime = this.currentTime;
     } else {
       // Otherwise, we play the video and adjust the playbackRate to get a smoother
@@ -302,22 +330,23 @@ class ScrollyVideo {
    * Sets the currentTime as a percentage of the video duration.
    *
    * @param setPercentage
+   * @param jump
    */
-  setTargetTimePercent(setPercentage) {
+  setTargetTimePercent(setPercentage, jump) {
     // The time we want to transition to
     this.targetTime = Math.max(Math.min(setPercentage, 1), 0)
       * ((this.frames.length && this.frameRate) ? this.frames.length
         / this.frameRate : this.video.duration);
 
     // If we are already transitioning, bail early
-    if (this.transitioning) return;
+    if (!jump && this.transitioning) return;
 
     // Play the video if we are in video mode
     if (!this.canvas) this.video.play();
 
     // Set transitioning state to true and begin transition
     this.transitioning = true;
-    this.transitionToTargetTime();
+    this.transitionToTargetTime(jump);
   }
 
   /**
@@ -329,6 +358,9 @@ class ScrollyVideo {
 
     // eslint-disable-next-line no-undef
     window.removeEventListener('resize', this.resize);
+
+    // Clear component
+    if (this.container) this.container.innerHTML = '';
   }
 }
 

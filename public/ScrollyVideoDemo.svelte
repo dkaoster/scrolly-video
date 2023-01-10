@@ -6,10 +6,15 @@
     'This library provides a way to easily create these kinds of scrolling video experiences, without fussing with special video encoding formats.',
     'Compatible with React, Svelte, Vue, and plain HTML.',
   ];
+
+  // Various state settings
+  let url = 'https://scrollyvideo.js.org/goldengate.mp4';
+  let trackScroll = true;
+  let videoPercentage = 0;
 </script>
 
 <div class="video-container">
-  <ScrollyVideo src="goldengate.mp4" />
+  <ScrollyVideo src={url} {trackScroll} {videoPercentage} />
 
   {#each cards as card}
     <div class="card-wrap">
@@ -18,6 +23,31 @@
       </div>
     </div>
   {/each}
+
+  <div class="card-wrap">
+    <div class="card options">
+      <h3>Try It</h3>
+      <div class="option-wrap">
+        <label for="video-url">Video URL</label>
+        <input id="video-url" type="text" bind:value={url}>
+      </div>
+
+      <div class="option-wrap">
+        <label for="track-scroll">Track Scroll</label>
+        <input id="track-scroll" type="checkbox" bind:checked={trackScroll}>
+      </div>
+    </div>
+  </div>
+
+  {#if !trackScroll}
+    <div class="scroll-track">
+      <h3>Video Position</h3>
+      <div class="option-wrap">
+        <label for="video-position">{Math.floor(videoPercentage * 100)}%</label>
+        <input id="video-position" type="range" min="0" max="1" step="0.01" bind:value={videoPercentage}>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -32,6 +62,8 @@
     align-items: flex-start;
     z-index: 1;
     position: relative;
+    width: 400px;
+    margin: auto;
   }
 
   .card {
@@ -40,5 +72,47 @@
     color: black;
     max-width: 400px;
     border-radius: 4px;
+  }
+
+  .card.options {
+    width: 100%;
+  }
+
+  .option-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 8px 0 12px 0;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  input {
+    margin-left: 12px;
+    flex-grow: 2;
+  }
+
+  input[type="checkbox"] {
+    flex-grow: unset;
+  }
+
+  .scroll-track {
+    position: sticky;
+    bottom: 20px;
+    left: 20px;
+    background-color: black;
+    width: 300px;
+    margin: 20px;
+    border-radius: 4px;
+    color: white;
+    padding: 18px 24px;
   }
 </style>
