@@ -53,17 +53,18 @@
 <style>
   .video-container {
     position: relative;
+    padding-bottom: 1px;
   }
 
   .card-wrap {
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     z-index: 1;
     position: relative;
     width: 400px;
-    margin: auto;
+    max-width: calc(100% - 20px);
+    margin: 0 auto 90vh;
   }
 
   .card {
@@ -109,7 +110,7 @@
     bottom: 20px;
     left: 20px;
     background-color: black;
-    width: 300px;
+    width: 240px;
     margin: 20px;
     border-radius: 4px;
     color: white;
