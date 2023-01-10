@@ -137,6 +137,12 @@ class ScrollyVideo {
         () => this.updateScrollPercentage(true),
         { once: true },
       );
+    } else {
+      this.video.addEventListener(
+        'loadedmetadata',
+        () => this.setTargetTimePercent(0, true),
+        { once: true },
+      );
     }
 
     // Add resize function
