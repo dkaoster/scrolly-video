@@ -1,5 +1,5 @@
 <script>
-import ScrollyVideo from './ScrollyVideo';
+import ScrollyVideo from './ScrollyVideo.js';
 
 export default {
   data() {
