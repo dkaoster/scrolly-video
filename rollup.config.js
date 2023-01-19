@@ -1,5 +1,5 @@
 import svelte from 'rollup-plugin-svelte';
-import vue from '@vitejs/plugin-vue';
+import vue from 'rollup-plugin-vue';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
