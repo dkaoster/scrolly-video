@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "scrolly-video": "^0.0.6",
+    "scrolly-video": "^0.0.10",
     "vue": "^3.2.45"
   },
   "devDependencies": {
