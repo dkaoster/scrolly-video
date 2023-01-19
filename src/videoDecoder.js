@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import MP4Box from 'mp4box';
+import * as MP4Box from 'mp4box';
 
 /**
  * Taken from https://github.com/w3c/webcodecs/blob/main/samples/mp4-decode/mp4_demuxer.js

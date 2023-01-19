@@ -1,6 +1,6 @@
 <script>
   import { onDestroy } from 'svelte';
-  import ScrollyVideo from './ScrollyVideo';
+  import ScrollyVideo from './ScrollyVideo.js';
 
   // variable to hold the DOM element
   let scrollyVideoContainer;
