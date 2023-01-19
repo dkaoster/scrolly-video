@@ -31,6 +31,9 @@
     "url": "https://github.com/dkaoster/scrolly-video/issues"
   },
   "homepage": "https://github.com/dkaoster/scrolly-video#readme",
+  "dependencies": {
+    "ua-parser-js": "^1.0.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
@@ -53,7 +56,6 @@
     "sirv-cli": "^2.0.2",
     "svelte": "^3.46.2",
     "svelte-markdown": "^0.2.3",
-    "svelte-preprocess": "^4.10.2",
-    "ua-parser-js": "^1.0.2"
+    "svelte-preprocess": "^4.10.2"
   }
 }
