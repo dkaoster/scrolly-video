@@ -1,4 +1,5 @@
 import svelte from 'rollup-plugin-svelte';
+import vue from '@vitejs/plugin-vue';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
@@ -48,7 +49,7 @@ export default [
       copy({
         targets: [
           // Copy the raw source code and components over to dist
-          { src: ['src/**/*'], dest: 'dist' },
+          { src: ['src/**/*', '!**/*.vue', '!**/*.jsx'], dest: 'dist' },
         ],
       }),
 
@@ -77,6 +78,22 @@ export default [
       format: 'cjs',
     },
     plugins: [
+      babel({
+        exclude: 'node_modules/**',
+      }),
+      resolve(),
+      commonjs(),
+    ],
+  },
+  // The vue component needs to be built
+  !docsSite && {
+    input: 'src/ScrollyVideo.vue',
+    output: {
+      file: 'dist/ScrollyVideo.vue.js',
+      format: 'cjs',
+    },
+    plugins: [
+      vue(),
       babel({
         exclude: 'node_modules/**',
       }),
