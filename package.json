@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/dkaoster/scrolly-video#readme",
   "dependencies": {
+    "mp4box": "^0.4.9",
     "ua-parser-js": "^1.0.2"
   },
   "devDependencies": {
@@ -45,7 +46,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-svelte3": "^3.4.0",
-    "mp4box": "^0.4.9",
     "rimraf": "^3.0.2",
     "rollup": "^2.46.0",
     "rollup-plugin-copy": "^3.4.0",
