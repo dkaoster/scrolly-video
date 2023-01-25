@@ -108,6 +108,9 @@ Thus, if the video needs to be animated backwards, this library falls back to me
 
 This method is the way that scrollytelling videos have traditionally been done, using an HTML `<video>` tag and skipping directly to frames using currentTime. However, this method requires the video to be encoded at keyframe = 1, which causes the video to be a lot larger or the quality to drop. Unfortunately, this is the only option for scenarios where methods 1 and 2 are not supported, or on mobile safari browsers where somehow this method performs better than method 2. Thus, to achieve maximum performance under all circumstances, it is still recommended to encode videos with keyframe = 1, if possible.
 
+## Known Issues
+- On iOS, ScrollyVideo will not work if battery saver mode is on. Unfortunately, there is no workaround for this due to the way that iOS handles videos and battery saving functions.
+
 ---
 
 Created by: [Daniel Kao](https://www.diplateevo.com/)
