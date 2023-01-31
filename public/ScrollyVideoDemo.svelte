@@ -8,13 +8,26 @@
   ];
 
   // Various state settings
-  let url = 'https://scrollyvideo.js.org/goldengate.mp4';
+  let url;
   let trackScroll = true;
   let videoPercentage = 0;
+  let width;
+
+  $: {
+    if (width) {
+      url = width > 760
+        ? 'https://scrollyvideo.js.org/goldengate.mp4'
+        : 'https://scrollyvideo.js.org/goldengate_mobile.mp4';
+    }
+  }
 </script>
 
+<svelte:window bind:innerWidth={width} />
+
 <div class="video-container">
-  <ScrollyVideo src={url} {trackScroll} {videoPercentage} />
+  {#if url}
+    <ScrollyVideo src={url} {trackScroll} {videoPercentage} />
+  {/if}
 
   {#each cards as card}
     <div class="card-wrap">
