@@ -3,10 +3,12 @@
   "version": "0.0.11",
   "description": "A component for scroll-based (or other externally controlled) playback.",
   "main": "dist/scrolly-video.js",
+  "types": "dist/ScrollyVideo.d.ts",
   "scripts": {
     "dev": "DOCS_SITE=true rollup -c -w",
     "build": "rimraf dist && rollup -c",
     "build-docs": "rimraf build && DOCS_SITE=true rollup -c",
+    "postbuild": "tsc",
     "start": "sirv build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
@@ -58,6 +60,7 @@
     "sirv-cli": "^2.0.2",
     "svelte": "^3.46.2",
     "svelte-markdown": "^0.2.3",
-    "svelte-preprocess": "^4.10.2"
+    "svelte-preprocess": "^4.10.2",
+    "typescript": "^4.9.5"
   }
 }
