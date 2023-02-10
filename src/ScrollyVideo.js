@@ -352,6 +352,9 @@ class ScrollyVideo {
       * ((this.frames.length && this.frameRate) ? this.frames.length
         / this.frameRate : this.video.duration);
 
+    // If we are close enough, return early
+    if (!jump && Math.abs(this.currentTime - this.targetTime) < this.frameThreshold) return;
+
     // If we are already transitioning, bail early
     if (!jump && this.transitioning) return;
 
