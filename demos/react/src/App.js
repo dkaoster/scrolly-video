@@ -1,4 +1,4 @@
-import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.cjs.jsx';
 
 function App() {
   return (
