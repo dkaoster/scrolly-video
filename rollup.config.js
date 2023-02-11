@@ -73,10 +73,16 @@ export default [
   // The react component needs to be built
   !docsSite && {
     input: 'src/ScrollyVideo.jsx',
-    output: {
-      file: 'dist/ScrollyVideo.jsx',
-      format: 'cjs',
-    },
+    output: [
+      {
+        file: 'dist/ScrollyVideo.cjs.jsx',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/ScrollyVideo.esm.jsx',
+        format: 'esm',
+      },
+    ],
     plugins: [
       babel({
         exclude: 'node_modules/**',

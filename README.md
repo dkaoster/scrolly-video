@@ -30,7 +30,9 @@ Install npm module with `npm install scrolly-video --save`:
 Import component in your application:
 
 ```javascript
-import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.jsx';
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.cjs.jsx';
+or
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.esm.jsx';
 ```
 
 Add the component where you need it:
