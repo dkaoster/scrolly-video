@@ -129,7 +129,7 @@ class ScrollyVideo {
     // Add our event listeners for handling changes to the window or scroll
     if (this.trackScroll) {
       // eslint-disable-next-line no-undef
-      window.addEventListener('scroll', () => this.updateScrollPercentage());
+      window.addEventListener('scroll', this.updateScrollPercentage);
 
       // Set the initial scroll percentage
       this.video.addEventListener(
@@ -370,6 +370,8 @@ class ScrollyVideo {
    * Call to destroy this ScrollyVideo object
    */
   destroy() {
+    if (this.debug) console.info('Destroying ScrollyVideo');
+
     // eslint-disable-next-line no-undef
     if (this.trackScroll) window.removeEventListener('scroll', this.updateScrollPercentage);
 
