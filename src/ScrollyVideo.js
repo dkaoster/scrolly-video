@@ -75,6 +75,7 @@ class ScrollyVideo {
     this.video.playsInline = true;
     this.video.muted = true;
     this.video.pause();
+    this.video.load();
 
     // Adds the video to the container
     this.container.appendChild(this.video);
