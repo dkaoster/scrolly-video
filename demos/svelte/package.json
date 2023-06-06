@@ -11,7 +11,7 @@
 		"@sveltejs/kit": "^1.15.2",
 		"scrolly-video": "^0.0.10",
 		"svelte": "^3.54.0",
-		"vite": "^4.0.0"
+		"vite": "^4.0.5"
 	},
 	"type": "module"
 }
