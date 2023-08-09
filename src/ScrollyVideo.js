@@ -360,7 +360,7 @@ class ScrollyVideo {
     if (!jump && this.transitioning) return;
 
     // Play the video if we are in video mode
-    if (!this.canvas) this.video.play();
+    if (!this.canvas && !this.video.paused) this.video.play();
 
     // Set transitioning state to true and begin transition
     this.transitioning = true;
