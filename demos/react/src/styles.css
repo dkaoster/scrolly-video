@@ -1,0 +1,33 @@
+.scroll-track {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: black;
+    width: 240px;
+    margin: 20px;
+    border-radius: 4px;
+    color: white;
+    padding: 18px 24px;
+}
+
+.option-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 8px 0 12px 0;
+}
+
+label {
+    font-size: 14px;
+}
+
+input {
+    margin-left: 12px;
+    flex-grow: 2;
+}
