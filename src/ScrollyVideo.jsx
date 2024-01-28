@@ -11,6 +11,7 @@ function ScrollyVideoComponent({
   trackScroll,
   useWebCodecs,
   videoPercentage,
+  debug,
 }) {
   const containerElement = useRef(null);
   const scrollyVideoRef = useRef(null);
@@ -37,6 +38,7 @@ function ScrollyVideoComponent({
       full,
       trackScroll,
       useWebCodecs,
+      debug,
       videoPercentage: videoPercentageRef.current,
     });
   }, [
@@ -48,6 +50,7 @@ function ScrollyVideoComponent({
     full,
     trackScroll,
     useWebCodecs,
+    debug,
   ]);
 
   // effect for video percentage change
