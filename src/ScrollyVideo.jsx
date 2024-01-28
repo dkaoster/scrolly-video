@@ -1,44 +1,82 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ScrollyVideo from './ScrollyVideo';
 
-function ScrollyVideoComponent(props) {
-
-  // variable to hold the DOM element
+function ScrollyVideoComponent({
+  src,
+  transitionSpeed,
+  frameThreshold,
+  cover,
+  sticky,
+  full,
+  trackScroll,
+  useWebCodecs,
+  videoPercentage,
+  debug,
+}) {
   const containerElement = useRef(null);
-
-  // ref to hold the scrollyVideo object
   const scrollyVideoRef = useRef(null);
 
-  // Store the props so we know when things change
-  const [lastPropsString, setLastPropsString] = useState('');
+  const videoPercentageRef = useRef(videoPercentage);
+  videoPercentageRef.current = videoPercentage;
 
+  // effect for destroy and recreate on props change (except video percentage)
   useEffect(() => {
-    if (containerElement) {
-      // separate out the videoPercentage prop
-      const { videoPercentage, ...restProps } = props;
+    if (!containerElement.current) return;
 
-      if (JSON.stringify(restProps) !== lastPropsString) {
-        // if scrollyvideo already exists and any parameter is updated, destroy and recreate.
-        if (scrollyVideoRef.current && scrollyVideoRef.current.destroy) scrollyVideoRef.current.destroy();
-        scrollyVideoRef.current = new ScrollyVideo({ scrollyVideoContainer: containerElement.current, ...props });
-
-        // Save the new props
-        setLastPropsString(JSON.stringify(restProps));
-      }
-
-      // If we need to update the target time percent
-      if (scrollyVideoRef.current && typeof videoPercentage === 'number' && videoPercentage >= 0 && videoPercentage <= 1) {
-        scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
-      }
+    // if scrollyVideo already exists and any parameter is updated, destroy and recreate.
+    if (scrollyVideoRef.current && scrollyVideoRef.current.destroy) {
+      scrollyVideoRef.current.destroy();
     }
 
-    // Cleanup the component on unmount
-    return () => {
-      if (scrollyVideoRef.current && scrollyVideoRef.current.destroy) scrollyVideoRef.current.destroy();
-    }
-  }, [containerElement, props]);
+    scrollyVideoRef.current = new ScrollyVideo({
+      scrollyVideoContainer: containerElement.current,
+      src,
+      transitionSpeed,
+      frameThreshold,
+      cover,
+      sticky,
+      full,
+      trackScroll,
+      useWebCodecs,
+      debug,
+      videoPercentage: videoPercentageRef.current,
+    });
+  }, [
+    src,
+    transitionSpeed,
+    frameThreshold,
+    cover,
+    sticky,
+    full,
+    trackScroll,
+    useWebCodecs,
+    debug,
+  ]);
 
-  return (<div ref={containerElement} />);
+  // effect for video percentage change
+  useEffect(() => {
+    // If we need to update the target time percent
+    if (
+      scrollyVideoRef.current &&
+      typeof videoPercentage === 'number' &&
+      videoPercentage >= 0 &&
+      videoPercentage <= 1
+    ) {
+      scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
+    }
+  }, [videoPercentage]);
+
+  // effect for unmount
+  useEffect(
+    () => () => {
+      if (scrollyVideoRef.current && scrollyVideoRef.current.destroy) {
+        scrollyVideoRef.current.destroy();
+      }
+    },
+    []
+  );
+
+  return <div ref={containerElement} />;
 }
 
 export default ScrollyVideoComponent;
