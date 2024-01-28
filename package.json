@@ -1,6 +1,6 @@
 {
   "name": "scrolly-video",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "A component for scroll-based (or other externally controlled) playback.",
   "main": "dist/scrolly-video.js",
   "types": "dist/ScrollyVideo.d.ts",
