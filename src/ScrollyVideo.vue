@@ -17,13 +17,13 @@ export default {
       if (this.scrollyVideo) this.scrollyVideo.destroy();
       this.scrollyVideo = new ScrollyVideo({
         scrollyVideoContainer: this.$refs.containerElement,
-        ...props
+        ...props,
       });
-    }
+    },
   },
   watch: {
-    '$attrs': {
-      handler: function() {
+    $attrs: {
+      handler: function () {
         // separate out the videoPercentage prop
         const { videoPercentage, ...restProps } = this.$attrs;
 
@@ -35,20 +35,25 @@ export default {
         }
 
         // If we need to update the target time percent
-        if (this.scrollyVideo && typeof videoPercentage === 'number' && videoPercentage >= 0 && videoPercentage <= 1) {
+        if (
+          this.scrollyVideo &&
+          typeof videoPercentage === 'number' &&
+          videoPercentage >= 0 &&
+          videoPercentage <= 1
+        ) {
           this.scrollyVideo.setTargetTimePercent(videoPercentage);
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.refreshScrollyVideo(this.$attrs);
   },
   unmounted() {
     if (this.scrollyVideo) this.scrollyVideo.destroy();
-  }
-}
+  },
+};
 </script>
 
 <template>

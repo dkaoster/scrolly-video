@@ -73,7 +73,7 @@ function ScrollyVideoComponent({
         scrollyVideoRef.current.destroy();
       }
     },
-    []
+    [],
   );
 
   return <div ref={containerElement} />;
