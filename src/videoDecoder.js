@@ -12,7 +12,8 @@ class Writer {
   }
 
   getData() {
-    if (this.idx !== this.size) throw new Error('Mismatch between size reserved and sized used');
+    if (this.idx !== this.size)
+      throw new Error('Mismatch between size reserved and sized used');
     return this.data.slice(0, this.idx);
   }
 
@@ -93,8 +94,12 @@ const getExtradata = (avccBox) => {
  * @param debug
  * @returns {Promise<unknown>}
  */
-const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug }) => new Promise(
-  (resolve, reject) => {
+const decodeVideo = (
+  src,
+  emitFrame,
+  { VideoDecoder, EncodedVideoChunk, debug },
+) =>
+  new Promise((resolve, reject) => {
     if (debug) console.info('Decoding video from', src);
 
     try {
@@ -107,21 +112,20 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
       // Creates a VideoDecoder instance
       const decoder = new VideoDecoder({
         output: (frame) => {
-          createImageBitmap(frame, { resizeQuality: 'low' })
-            .then((bitmap) => {
-              emitFrame(bitmap);
-              frame.close();
+          createImageBitmap(frame, { resizeQuality: 'low' }).then((bitmap) => {
+            emitFrame(bitmap);
+            frame.close();
 
-              if (decoder.decodeQueueSize <= 0) {
-                // Give it an extra half second to finish everything
-                setTimeout(() => {
-                  if (decoder.state !== 'closed') {
-                    decoder.close();
-                    resolve();
-                  }
-                }, 500);
-              }
-            });
+            if (decoder.decodeQueueSize <= 0) {
+              // Give it an extra half second to finish everything
+              setTimeout(() => {
+                if (decoder.state !== 'closed') {
+                  decoder.close();
+                  resolve();
+                }
+              }, 500);
+            }
+          });
         },
         error: (e) => {
           // eslint-disable-next-line no-console
@@ -132,11 +136,12 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
 
       mp4boxfile.onReady = (info) => {
         if (info && info.videoTracks && info.videoTracks[0]) {
-          ([{ codec }] = info.videoTracks);
+          [{ codec }] = info.videoTracks;
           if (debug) console.info('Video with codec:', codec);
 
           // Gets the avccbox used for reading extradata
-          const avccBox = mp4boxfile.moov.traks[0].mdia.minf.stbl.stsd.entries[0].avcC;
+          const avccBox =
+            mp4boxfile.moov.traks[0].mdia.minf.stbl.stsd.entries[0].avcC;
           const extradata = getExtradata(avccBox);
 
           // configure decoder
@@ -165,32 +170,30 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
       };
 
       // Fetches the file into arraybuffers
-      fetch(src)
-        .then((res) => {
-          const reader = res.body.getReader();
-          let offset = 0;
+      fetch(src).then((res) => {
+        const reader = res.body.getReader();
+        let offset = 0;
 
-          function appendBuffers({ done, value }) {
-            if (done) {
-              mp4boxfile.flush();
-              return null;
-            }
-
-            const buf = value.buffer;
-            buf.fileStart = offset;
-            offset += buf.byteLength;
-            mp4boxfile.appendBuffer(buf);
-
-            return reader.read().then(appendBuffers);
+        function appendBuffers({ done, value }) {
+          if (done) {
+            mp4boxfile.flush();
+            return null;
           }
 
+          const buf = value.buffer;
+          buf.fileStart = offset;
+          offset += buf.byteLength;
+          mp4boxfile.appendBuffer(buf);
+
           return reader.read().then(appendBuffers);
-        });
+        }
+
+        return reader.read().then(appendBuffers);
+      });
     } catch (e) {
       reject(e);
     }
-  },
-);
+  });
 
 /**
  * The main function for decoding video. Deals with the polyfill cases first,
@@ -203,9 +206,17 @@ const decodeVideo = (src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug })
  */
 export default (src, emitFrame, debug) => {
   // If our browser supports WebCodecs natively
-  if (typeof VideoDecoder === 'function' && typeof EncodedVideoChunk === 'function') {
-    if (debug) console.info('WebCodecs is natively supported, using native version...');
-    return decodeVideo(src, emitFrame, { VideoDecoder, EncodedVideoChunk, debug });
+  if (
+    typeof VideoDecoder === 'function' &&
+    typeof EncodedVideoChunk === 'function'
+  ) {
+    if (debug)
+      console.info('WebCodecs is natively supported, using native version...');
+    return decodeVideo(src, emitFrame, {
+      VideoDecoder,
+      EncodedVideoChunk,
+      debug,
+    });
   }
 
   // Otherwise, resolve nothing

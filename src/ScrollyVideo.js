@@ -43,12 +43,14 @@ class ScrollyVideo {
 
     // Save the container. If the container is a string we get the element
     // eslint-disable-next-line no-undef
-    if (scrollyVideoContainer instanceof Element) this.container = scrollyVideoContainer;
+    if (scrollyVideoContainer instanceof Element)
+      this.container = scrollyVideoContainer;
     // otherwise it should better be an element
     else if (typeof scrollyVideoContainer === 'string') {
       // eslint-disable-next-line no-undef
       this.container = document.getElementById(scrollyVideoContainer);
-      if (!this.container) throw new Error('scrollyVideoContainer must be a valid DOM object');
+      if (!this.container)
+        throw new Error('scrollyVideoContainer must be a valid DOM object');
     } else {
       throw new Error('scrollyVideoContainer must be a valid DOM object');
     }
@@ -98,7 +100,7 @@ class ScrollyVideo {
     if (cover) this.setCoverStyle(this.video);
 
     // Detect webkit (safari), because webkit requires special attention
-    const browserEngine = (new UAParser()).getEngine();
+    const browserEngine = new UAParser().getEngine();
     // eslint-disable-next-line no-undef
     this.isSafari = browserEngine.name === 'WebKit';
     if (debug && this.isSafari) console.info('Safari browser detected');
@@ -114,12 +116,14 @@ class ScrollyVideo {
     // Add scroll listener for responding to scroll position
     this.updateScrollPercentage = (jump) => {
       // Used for internally setting the scroll percentage based on built-in listeners
-      const containerBoundingClientRect = this.container.parentNode.getBoundingClientRect();
+      const containerBoundingClientRect =
+        this.container.parentNode.getBoundingClientRect();
 
       // Calculate the current scroll percent of the video
-      const scrollPercent = (-containerBoundingClientRect.top)
+      const scrollPercent =
+        -containerBoundingClientRect.top /
         // eslint-disable-next-line no-undef
-        / (containerBoundingClientRect.height - window.innerHeight);
+        (containerBoundingClientRect.height - window.innerHeight);
 
       if (this.debug) console.info('ScrollyVideo scrolled to', scrollPercent);
 
@@ -179,15 +183,18 @@ class ScrollyVideo {
       el.style.minHeight = '101%';
 
       // Gets the width and height of the container
-      const {
-        width: containerWidth, height: containerHeight,
-      } = this.container.getBoundingClientRect();
+      const { width: containerWidth, height: containerHeight } =
+        this.container.getBoundingClientRect();
 
       // Gets the width and height of the video frames
       const width = el.videoWidth || el.width;
       const height = el.videoHeight || el.height;
 
-      if (this.debug) console.info('Container dimensions:', [containerWidth, containerHeight]);
+      if (this.debug)
+        console.info('Container dimensions:', [
+          containerWidth,
+          containerHeight,
+        ]);
       if (this.debug) console.info('Element dimensions:', [width, height]);
 
       // Determines which axis needs to be 100% and which needs to be scaled
@@ -207,9 +214,16 @@ class ScrollyVideo {
    */
   decodeVideo() {
     if (this.useWebCodecs && this.src) {
-      videoDecoder(this.src, (frame) => { this.frames.push(frame); }, this.debug)
+      videoDecoder(
+        this.src,
+        (frame) => {
+          this.frames.push(frame);
+        },
+        this.debug,
+      )
         .catch(() => {
-          if (this.debug) console.error('Error encountered while decoding video');
+          if (this.debug)
+            console.error('Error encountered while decoding video');
           // Remove all decoded frames if a failure happens during decoding
           this.frames = [];
 
@@ -219,13 +233,15 @@ class ScrollyVideo {
         .then(() => {
           // If no frames, something went wrong
           if (this.frames.length === 0) {
-            if (this.debug) console.error('No frames were received from webCodecs');
+            if (this.debug)
+              console.error('No frames were received from webCodecs');
             return;
           }
 
           // Calculate the frameRate based on number of frames and the duration
           this.frameRate = this.frames.length / this.video.duration;
-          if (this.debug) console.info('Received', this.frames.length, 'frames');
+          if (this.debug)
+            console.info('Received', this.frames.length, 'frames');
 
           // Remove the video and add the canvas
           // eslint-disable-next-line no-undef
@@ -269,7 +285,13 @@ class ScrollyVideo {
         }
 
         // Draw the frame to the canvas context
-        this.context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
+        this.context.drawImage(
+          currFrame,
+          0,
+          0,
+          currFrame.width,
+          currFrame.height,
+        );
       }
     }
   }
@@ -281,16 +303,21 @@ class ScrollyVideo {
    */
   transitionToTargetTime(jump) {
     if (this.debug) {
-      console.info('Transitioning targetTime:', this.targetTime, 'currentTime:', this.currentTime);
+      console.info(
+        'Transitioning targetTime:',
+        this.targetTime,
+        'currentTime:',
+        this.currentTime,
+      );
     }
 
     // If we are already close enough to our target, pause the video and return.
     // This is the base case of the recursive function
     if (
       // eslint-disable-next-line no-restricted-globals
-      isNaN(this.targetTime)
+      isNaN(this.targetTime) ||
       // If the currentTime is already close enough to the targetTime
-      || Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
+      Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
     ) {
       this.video.pause();
       this.transitioning = false;
@@ -298,7 +325,8 @@ class ScrollyVideo {
     }
 
     // Make sure we don't go out of time bounds
-    if (this.targetTime > this.video.duration) this.targetTime = this.video.duration;
+    if (this.targetTime > this.video.duration)
+      this.targetTime = this.video.duration;
     if (this.targetTime < 0) this.targetTime = 0;
 
     // How far forward we need to transition
@@ -310,7 +338,11 @@ class ScrollyVideo {
       // If jump, we go directly to the frame
       if (jump) this.currentTime = this.targetTime;
       this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
-    } else if (jump || this.isSafari || this.targetTime - this.currentTime < 0) {
+    } else if (
+      jump ||
+      this.isSafari ||
+      this.targetTime - this.currentTime < 0
+    ) {
       // We can't use a negative playbackRate, so if the video needs to go backwards,
       // We have to use the inefficient method of modifying currentTime rapidly to
       // get an effect.
@@ -322,7 +354,10 @@ class ScrollyVideo {
     } else {
       // Otherwise, we play the video and adjust the playbackRate to get a smoother
       // animation effect.
-      const playbackRate = Math.max(Math.min((transitionForward) * 4, this.transitionSpeed, 16), 1);
+      const playbackRate = Math.max(
+        Math.min(transitionForward * 4, this.transitionSpeed, 16),
+        1,
+      );
       if (this.debug) console.info('ScrollyVideo playbackRate:', playbackRate);
       // eslint-disable-next-line no-restricted-globals
       if (!isNaN(playbackRate)) {
@@ -349,12 +384,18 @@ class ScrollyVideo {
    */
   setTargetTimePercent(setPercentage, jump) {
     // The time we want to transition to
-    this.targetTime = Math.max(Math.min(setPercentage, 1), 0)
-      * ((this.frames.length && this.frameRate) ? this.frames.length
-        / this.frameRate : this.video.duration);
+    this.targetTime =
+      Math.max(Math.min(setPercentage, 1), 0) *
+      (this.frames.length && this.frameRate
+        ? this.frames.length / this.frameRate
+        : this.video.duration);
 
     // If we are close enough, return early
-    if (!jump && Math.abs(this.currentTime - this.targetTime) < this.frameThreshold) return;
+    if (
+      !jump &&
+      Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
+    )
+      return;
 
     // If we are already transitioning, bail early
     if (!jump && this.transitioning) return;
@@ -374,7 +415,8 @@ class ScrollyVideo {
     if (this.debug) console.info('Destroying ScrollyVideo');
 
     // eslint-disable-next-line no-undef
-    if (this.trackScroll) window.removeEventListener('scroll', this.updateScrollPercentage);
+    if (this.trackScroll)
+      window.removeEventListener('scroll', this.updateScrollPercentage);
 
     // eslint-disable-next-line no-undef
     window.removeEventListener('resize', this.resize);
