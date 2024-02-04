@@ -334,7 +334,11 @@ class ScrollyVideo {
         // eslint-disable-next-line no-restricted-globals
         isNaN(this.targetTime) ||
         // If the currentTime is already close enough to the targetTime
-        Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
+        Math.abs(this.currentTime - this.targetTime) < this.frameThreshold ||
+        // if frameThreshold is too small to catch the condition
+        isForward
+          ? this.currentTime >= this.targetTime
+          : this.currentTime <= this.targetTime
       ) {
         this.video.pause();
 
