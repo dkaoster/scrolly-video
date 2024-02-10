@@ -328,17 +328,19 @@ class ScrollyVideo {
         );
       }
 
+      // if frameThreshold is too low to catch condition Math.abs(this.targetTime - this.currentTime) < this.frameThreshold
+      const hasPassedThreshold = isForward
+        ? this.currentTime >= this.targetTime
+        : this.currentTime <= this.targetTime;
+
       // If we are already close enough to our target, pause the video and return.
       // This is the base case of the recursive function
       if (
         // eslint-disable-next-line no-restricted-globals
         isNaN(this.targetTime) ||
         // If the currentTime is already close enough to the targetTime
-        Math.abs(this.currentTime - this.targetTime) < this.frameThreshold ||
-        // if frameThreshold is too small to catch the condition
-        isForward
-          ? this.currentTime >= this.targetTime
-          : this.currentTime <= this.targetTime
+        Math.abs(this.targetTime - this.currentTime) < this.frameThreshold ||
+        hasPassedThreshold
       ) {
         this.video.pause();
 
