@@ -4,7 +4,6 @@ import ScrollyVideo from './ScrollyVideo';
 
 function App() {
   const scrollyRef = useRef();
-  const [videoPercentage, setVideoPercentage] = useState(0);
   const [trackScroll, setTrackScroll] = useState(true);
 
   return (
@@ -13,7 +12,6 @@ function App() {
         ref={scrollyRef}
         src="https://scrollyvideo.js.org/goldengate.mp4"
         trackScroll={trackScroll}
-        videoPercentage={videoPercentage}
       />
 
       <div className="scroll-track">
@@ -31,20 +29,20 @@ function App() {
           />
         </div>
         <div className="option-wrap">
-          <label htmlFor="video-position">
-            {Math.floor(videoPercentage * 100)}%
-          </label>
           <input
             id="video-position"
             type="range"
             min="0"
             max="1"
             step="0.01"
-            value={videoPercentage}
+            defaultValue={0}
             onChange={(e) => {
-              setVideoPercentage(parseFloat(e.target.value), {
-                easing: d3.easeBounce,
-              });
+              scrollyRef.current.setVideoPercentage(
+                parseFloat(e.target.value),
+                {
+                  easing: d3.easeLinear,
+                },
+              );
             }}
           />
         </div>
