@@ -419,7 +419,7 @@ class ScrollyVideo {
 
     if (typeof requestAnimationFrame === 'function') {
       // eslint-disable-next-line no-undef
-      requestAnimationFrame((startTimestamp) => {
+      this.transitioningRaf = requestAnimationFrame((startTimestamp) => {
         tick({
           startCurrentTime: this.currentTime,
           startTimestamp,

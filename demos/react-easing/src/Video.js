@@ -405,7 +405,6 @@ class ScrollyVideo {
       }
 
       // Recursively calls ourselves until the animation is done.
-      // eslint-disable-next-line no-undef
       if (typeof requestAnimationFrame === 'function') {
         // eslint-disable-next-line no-undef
         this.transitioningRaf = requestAnimationFrame((currentTimestamp) =>
@@ -420,7 +419,7 @@ class ScrollyVideo {
 
     if (typeof requestAnimationFrame === 'function') {
       // eslint-disable-next-line no-undef
-      requestAnimationFrame((startTimestamp) => {
+      this.transitioningRaf = requestAnimationFrame((startTimestamp) => {
         tick({
           startCurrentTime: this.currentTime,
           startTimestamp,
