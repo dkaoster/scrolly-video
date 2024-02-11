@@ -1,26 +1,19 @@
 import * as d3 from 'd3-ease';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ScrollyVideo from './ScrollyVideo';
 
 function App() {
+  const scrollyRef = useRef();
   const [videoPercentage, setVideoPercentage] = useState(0);
   const [trackScroll, setTrackScroll] = useState(true);
 
   return (
     <div className="scrolly-container" style={{ height: '300vh' }}>
       <ScrollyVideo
+        ref={scrollyRef}
         src="https://scrollyvideo.js.org/goldengate.mp4"
         trackScroll={trackScroll}
         videoPercentage={videoPercentage}
-        easing={(progress) => {
-          return d3.easeBounce(progress);
-          // {progress: 0.00848958669503906, step: 0.06666666666666667}
-
-          // return d3.easeLinear(progress);
-          // {progress: 0.886415172129458, step: 0.06666666666666667}
-        }}
-        transitionSpeed={1}
-        // frameThreshold={0.1}
       />
 
       <div className="scroll-track">
@@ -49,7 +42,9 @@ function App() {
             step="0.01"
             value={videoPercentage}
             onChange={(e) => {
-              setVideoPercentage(parseFloat(e.target.value));
+              setVideoPercentage(parseFloat(e.target.value), {
+                easing: d3.easeBounce,
+              });
             }}
           />
         </div>
