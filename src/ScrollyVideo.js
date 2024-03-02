@@ -23,7 +23,6 @@ class ScrollyVideo {
     transitionSpeed = 8, // How fast the video transitions between points
     frameThreshold = 0.1, // When to stop the video animation, in seconds
     useWebCodecs = true, // Whether to try using the webcodecs approach
-    easing = null, // Custom easing curve for the transition
     debug = false, // Whether to print debug stats to the console
   }) {
     // Make sure that we have a DOM
@@ -65,7 +64,6 @@ class ScrollyVideo {
     this.sticky = sticky;
     this.full = full;
     this.trackScroll = trackScroll;
-    this.easing = easing;
     this.debug = debug;
 
     // Create the initial video object. Even if we are going to use webcodecs,
@@ -309,7 +307,7 @@ class ScrollyVideo {
   transitionToTargetTime({
     jump,
     transitionSpeed = this.transitionSpeed,
-    easing = this.easing,
+    easing = null,
   }) {
     if (this.debug) {
       console.info(
