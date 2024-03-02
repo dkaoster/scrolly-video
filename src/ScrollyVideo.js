@@ -358,18 +358,20 @@ class ScrollyVideo {
 
       // How far forward we need to transition
       const transitionForward = this.targetTime - this.currentTime;
+      const easedProgress =
+        easing && Number.isFinite(progress) ? easing(progress) : null;
+      const easedCurrentTime = isForwardTransition
+        ? startCurrentTime +
+          easedProgress * Math.abs(distance) * transitionSpeed
+        : startCurrentTime -
+          easedProgress * Math.abs(distance) * transitionSpeed;
 
       if (this.canvas) {
         if (jump) {
           // If jump, we go directly to the frame
           this.currentTime = this.targetTime;
-        } else if (easing && Number.isFinite(progress)) {
-          const easedProgress = easing(progress);
-          this.currentTime = isForwardTransition
-            ? startCurrentTime +
-              easedProgress * Math.abs(distance) * transitionSpeed
-            : startCurrentTime -
-              easedProgress * Math.abs(distance) * transitionSpeed;
+        } else if (easedProgress) {
+          this.currentTime = easedCurrentTime;
         } else {
           this.currentTime += transitionForward / (256 / transitionSpeed);
         }
@@ -380,9 +382,18 @@ class ScrollyVideo {
         // We have to use the inefficient method of modifying currentTime rapidly to
         // get an effect.
         this.video.pause();
-        this.currentTime += transitionForward / (64 / transitionSpeed);
+
+        if (easedProgress) {
+          this.currentTime = easedCurrentTime;
+        } else {
+          this.currentTime += transitionForward / (64 / transitionSpeed);
+        }
+
         // If jump, we go directly to the frame
-        if (jump) this.currentTime = this.targetTime;
+        if (jump) {
+          this.currentTime = this.targetTime;
+        }
+
         this.video.currentTime = this.currentTime;
       } else {
         // Otherwise, we play the video and adjust the playbackRate to get a smoother
