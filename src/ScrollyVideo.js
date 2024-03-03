@@ -408,7 +408,12 @@ class ScrollyVideo {
     this.transitionToTargetTime(jump);
   }
 
-  setPercentage(percentage) {
+  /**
+   * Simulate trackScroll programmatically (scrolls on page by percentage of video)
+   *
+   * @param percentage
+   */
+  setScrollPercent(percentage) {
     const parent = this.container.parentNode;
     const { top, height } = parent.getBoundingClientRect();
 

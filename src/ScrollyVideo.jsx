@@ -76,9 +76,13 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
       videoPercentage >= 0 &&
       videoPercentage <= 1
     ) {
-      scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
+      if (trackScroll) {
+        scrollyVideoRef.current.setScrollPercent(videoPercentage)
+      } else {
+        scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
+      }
     }
-  }, [videoPercentage]);
+  }, [videoPercentage, trackScroll]);
 
   // effect for unmount
   useEffect(
@@ -93,8 +97,8 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
   useImperativeHandle(
     ref,
     () => ({
-      setPercentage: scrollyVideoRef.current
-        ? scrollyVideoRef.current.setPercentage.bind(instance)
+      setScrollPercent: scrollyVideoRef.current
+        ? scrollyVideoRef.current.setScrollPercent.bind(instance)
         : () => {},
     }),
     [instance],
