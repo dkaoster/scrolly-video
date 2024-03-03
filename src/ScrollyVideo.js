@@ -408,6 +408,20 @@ class ScrollyVideo {
     this.transitionToTargetTime(jump);
   }
 
+  setPercentage(percentage) {
+    const parent = this.container.parentNode;
+    const { top, height } = parent.getBoundingClientRect();
+
+    // eslint-disable-next-line no-undef
+    const startPoint = top + window.pageYOffset;
+    // eslint-disable-next-line no-undef
+    const containerHeightInViewport = height - window.innerHeight;
+    const targetPoint = startPoint + containerHeightInViewport * percentage;
+
+    // eslint-disable-next-line no-undef
+    window.scrollTo({ top: targetPoint });
+  }
+
   /**
    * Call to destroy this ScrollyVideo object
    */
