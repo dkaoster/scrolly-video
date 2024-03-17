@@ -89,7 +89,11 @@ Add html code to your html component:
 
 Additionally, to set currentTime manually:
 
-***setCurrentTimePercent*** (`setPercentage | Number`): A number between 0 and 1 that specifies the percentage position of the video.
+***setCurrentTimePercent*** (`percentage: number`, `options: Options`): Pass a progress in between of 0 and 1 that specifies the percentage position of the video. Optionally, to customise experience of separate `setCurrentTimePercent` calls you can utilise options:
+- `transitionSpeed`: `number`
+- `easing`: `(progress: number) => number`
+
+Example: `setCurrentTimePercent(0.5, { transitionSpeed: 12, easing: d3.easeLinear })`
 
 ## Technical Details and Cross Browser Differences
 To make this library perform optimally in all browsers, three different approaches are taken to animating the video.
