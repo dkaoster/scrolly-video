@@ -1,20 +1,30 @@
-import React, { useEffect, useRef } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ScrollyVideo from './ScrollyVideo';
 
-function ScrollyVideoComponent({
-  src,
-  transitionSpeed,
-  frameThreshold,
-  cover,
-  sticky,
-  full,
-  trackScroll,
-  useWebCodecs,
-  videoPercentage,
-  debug,
-}) {
+const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
+  {
+    src,
+    transitionSpeed,
+    frameThreshold,
+    cover,
+    sticky,
+    full,
+    trackScroll,
+    useWebCodecs,
+    videoPercentage,
+    debug,
+  },
+  ref,
+) {
   const containerElement = useRef(null);
   const scrollyVideoRef = useRef(null);
+  const [instance, setInstance] = useState(null);
 
   const videoPercentageRef = useRef(videoPercentage);
   videoPercentageRef.current = videoPercentage;
@@ -28,7 +38,7 @@ function ScrollyVideoComponent({
       scrollyVideoRef.current.destroy();
     }
 
-    scrollyVideoRef.current = new ScrollyVideo({
+    const scrollyVideo = new ScrollyVideo({
       scrollyVideoContainer: containerElement.current,
       src,
       transitionSpeed,
@@ -41,6 +51,9 @@ function ScrollyVideoComponent({
       debug,
       videoPercentage: videoPercentageRef.current,
     });
+
+    setInstance(scrollyVideo);
+    scrollyVideoRef.current = scrollyVideo;
   }, [
     src,
     transitionSpeed,
@@ -76,7 +89,17 @@ function ScrollyVideoComponent({
     [],
   );
 
-  return <div ref={containerElement} />;
-}
+  useImperativeHandle(
+    ref,
+    () => ({
+      setVideoPercentage: scrollyVideoRef.current
+        ? scrollyVideoRef.current.setTargetTimePercent.bind(instance)
+        : () => {},
+    }),
+    [instance],
+  );
+
+  return <div ref={containerElement} data-scrolly-container />;
+});
 
 export default ScrollyVideoComponent;

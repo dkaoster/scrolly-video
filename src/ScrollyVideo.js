@@ -297,11 +297,18 @@ class ScrollyVideo {
   }
 
   /**
-   * Transitions the video or the canvas to the proper frame
+   * Transitions the video or the canvas to the proper frame.
    *
-   * @param jump
+   * @param options - Configuration options for adjusting the video playback.
+   *    - jump: boolean - If true, the video currentTime will jump directly to the specified percentage. If false, the change will be animated over time.
+   *    - transitionSpeed: number - Defines the speed of the transition when `jump` is false. Represents the duration of the transition in milliseconds. Default is 8.
+   *    - easing: (progress: number) => number - A function that defines the easing curve for the transition. It takes the progress ratio (a number between 0 and 1) as an argument and returns the eased value, affecting the playback speed during the transition.
    */
-  transitionToTargetTime(jump) {
+  transitionToTargetTime({
+    jump,
+    transitionSpeed = this.transitionSpeed,
+    easing = null,
+  }) {
     if (this.debug) {
       console.info(
         'Transitioning targetTime:',
@@ -311,78 +318,137 @@ class ScrollyVideo {
       );
     }
 
-    // If we are already close enough to our target, pause the video and return.
-    // This is the base case of the recursive function
-    if (
-      // eslint-disable-next-line no-restricted-globals
-      isNaN(this.targetTime) ||
-      // If the currentTime is already close enough to the targetTime
-      Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
-    ) {
-      this.video.pause();
-      this.transitioning = false;
-      return;
-    }
+    const diff = this.targetTime - this.currentTime;
+    const distance = Math.abs(diff);
+    const duration = distance * 1000;
+    const isForwardTransition = diff > 0;
 
-    // Make sure we don't go out of time bounds
-    if (this.targetTime > this.video.duration)
-      this.targetTime = this.video.duration;
-    if (this.targetTime < 0) this.targetTime = 0;
+    const tick = ({ startCurrentTime, startTimestamp, timestamp }) => {
+      const progress = (timestamp - startTimestamp) / duration;
 
-    // How far forward we need to transition
-    const transitionForward = this.targetTime - this.currentTime;
+      // if frameThreshold is too low to catch condition Math.abs(this.targetTime - this.currentTime) < this.frameThreshold
+      const hasPassedThreshold = isForwardTransition
+        ? this.currentTime >= this.targetTime
+        : this.currentTime <= this.targetTime;
 
-    if (this.canvas) {
-      // Update currentTime and paint the closest frame
-      this.currentTime += transitionForward / (256 / this.transitionSpeed);
-      // If jump, we go directly to the frame
-      if (jump) this.currentTime = this.targetTime;
-      this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
-    } else if (
-      jump ||
-      this.isSafari ||
-      this.targetTime - this.currentTime < 0
-    ) {
-      // We can't use a negative playbackRate, so if the video needs to go backwards,
-      // We have to use the inefficient method of modifying currentTime rapidly to
-      // get an effect.
-      this.video.pause();
-      this.currentTime += transitionForward / (64 / this.transitionSpeed);
-      // If jump, we go directly to the frame
-      if (jump) this.currentTime = this.targetTime;
-      this.video.currentTime = this.currentTime;
-    } else {
-      // Otherwise, we play the video and adjust the playbackRate to get a smoother
-      // animation effect.
-      const playbackRate = Math.max(
-        Math.min(transitionForward * 4, this.transitionSpeed, 16),
-        1,
-      );
-      if (this.debug) console.info('ScrollyVideo playbackRate:', playbackRate);
-      // eslint-disable-next-line no-restricted-globals
-      if (!isNaN(playbackRate)) {
-        this.video.playbackRate = playbackRate;
-        this.video.play();
+      // If we are already close enough to our target, pause the video and return.
+      // This is the base case of the recursive function
+      if (
+        // eslint-disable-next-line no-restricted-globals
+        isNaN(this.targetTime) ||
+        // If the currentTime is already close enough to the targetTime
+        Math.abs(this.targetTime - this.currentTime) < this.frameThreshold ||
+        hasPassedThreshold
+      ) {
+        this.video.pause();
+
+        if (this.transitioningRaf) {
+          // eslint-disable-next-line no-undef
+          cancelAnimationFrame(this.transitioningRaf);
+          this.transitioningRaf = null;
+        }
+
+        return;
       }
-      // Set the currentTime to the video's currentTime
-      this.currentTime = this.video.currentTime;
-    }
 
-    // Recursively calls ourselves until the animation is done.
-    // eslint-disable-next-line no-undef
+      // Make sure we don't go out of time bounds
+      if (this.targetTime > this.video.duration)
+        this.targetTime = this.video.duration;
+      if (this.targetTime < 0) this.targetTime = 0;
+
+      // How far forward we need to transition
+      const transitionForward = this.targetTime - this.currentTime;
+      const easedProgress =
+        easing && Number.isFinite(progress) ? easing(progress) : null;
+      const easedCurrentTime = isForwardTransition
+        ? startCurrentTime +
+          easedProgress * Math.abs(distance) * transitionSpeed
+        : startCurrentTime -
+          easedProgress * Math.abs(distance) * transitionSpeed;
+
+      if (this.canvas) {
+        if (jump) {
+          // If jump, we go directly to the frame
+          this.currentTime = this.targetTime;
+        } else if (easedProgress) {
+          this.currentTime = easedCurrentTime;
+        } else {
+          this.currentTime += transitionForward / (256 / transitionSpeed);
+        }
+
+        this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
+      } else if (jump || this.isSafari || !isForwardTransition) {
+        // We can't use a negative playbackRate, so if the video needs to go backwards,
+        // We have to use the inefficient method of modifying currentTime rapidly to
+        // get an effect.
+        this.video.pause();
+
+        if (easedProgress) {
+          this.currentTime = easedCurrentTime;
+        } else {
+          this.currentTime += transitionForward / (64 / transitionSpeed);
+        }
+
+        // If jump, we go directly to the frame
+        if (jump) {
+          this.currentTime = this.targetTime;
+        }
+
+        this.video.currentTime = this.currentTime;
+      } else {
+        // Otherwise, we play the video and adjust the playbackRate to get a smoother
+        // animation effect.
+        const playbackRate = Math.max(
+          Math.min(transitionForward * 4, transitionSpeed, 16),
+          1,
+        );
+        if (this.debug)
+          console.info('ScrollyVideo playbackRate:', playbackRate);
+        // eslint-disable-next-line no-restricted-globals
+        if (!isNaN(playbackRate)) {
+          this.video.playbackRate = playbackRate;
+          this.video.play();
+        }
+        // Set the currentTime to the video's currentTime
+        this.currentTime = this.video.currentTime;
+      }
+
+      // Recursively calls ourselves until the animation is done.
+      if (typeof requestAnimationFrame === 'function') {
+        // eslint-disable-next-line no-undef
+        this.transitioningRaf = requestAnimationFrame((currentTimestamp) =>
+          tick({
+            startCurrentTime,
+            startTimestamp,
+            timestamp: currentTimestamp,
+          }),
+        );
+      }
+    };
+
     if (typeof requestAnimationFrame === 'function') {
       // eslint-disable-next-line no-undef
-      requestAnimationFrame(() => this.transitionToTargetTime());
+      this.transitioningRaf = requestAnimationFrame((startTimestamp) => {
+        tick({
+          startCurrentTime: this.currentTime,
+          startTimestamp,
+          timestamp: startTimestamp,
+        });
+      });
     }
   }
 
   /**
-   * Sets the currentTime as a percentage of the video duration.
+   * Sets the currentTime of the video as a specified percentage of its total duration.
    *
-   * @param setPercentage
-   * @param jump
+   * @param setPercentage - The percentage of the video duration to set as the current time.
+   * @param options - Configuration options for adjusting the video playback.
+   *    - jump: boolean - If true, the video currentTime will jump directly to the specified percentage. If false, the change will be animated over time.
+   *    - transitionSpeed: number - Defines the speed of the transition when `jump` is false. Represents the duration of the transition in milliseconds. Default is 8.
+   *    - easing: (progress: number) => number - A function that defines the easing curve for the transition. It takes the progress ratio (a number between 0 and 1) as an argument and returns the eased value, affecting the playback speed during the transition.
    */
-  setTargetTimePercent(setPercentage, jump) {
+  setTargetTimePercent(setPercentage, options = {}) {
+    // eslint-disable-next-line
     // The time we want to transition to
     this.targetTime =
       Math.max(Math.min(setPercentage, 1), 0) *
@@ -392,20 +458,15 @@ class ScrollyVideo {
 
     // If we are close enough, return early
     if (
-      !jump &&
+      !options.jump &&
       Math.abs(this.currentTime - this.targetTime) < this.frameThreshold
     )
       return;
 
-    // If we are already transitioning, bail early
-    if (!jump && this.transitioning) return;
-
     // Play the video if we are in video mode
     if (!this.canvas && !this.video.paused) this.video.play();
 
-    // Set transitioning state to true and begin transition
-    this.transitioning = true;
-    this.transitionToTargetTime(jump);
+    this.transitionToTargetTime(options);
   }
 
   /**
@@ -414,8 +475,8 @@ class ScrollyVideo {
   destroy() {
     if (this.debug) console.info('Destroying ScrollyVideo');
 
-    // eslint-disable-next-line no-undef
     if (this.trackScroll)
+      // eslint-disable-next-line no-undef
       window.removeEventListener('scroll', this.updateScrollPercentage);
 
     // eslint-disable-next-line no-undef
