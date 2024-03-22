@@ -128,7 +128,7 @@ class ScrollyVideo {
       if (this.debug) console.info('ScrollyVideo scrolled to', scrollPercent);
 
       // Set the target time percent
-      this.setTargetTimePercent(scrollPercent, jump);
+      this.setTargetTimePercent(scrollPercent, { jump });
     };
 
     // Add our event listeners for handling changes to the window or scroll
@@ -145,7 +145,7 @@ class ScrollyVideo {
     } else {
       this.video.addEventListener(
         'loadedmetadata',
-        () => this.setTargetTimePercent(0, true),
+        () => this.setTargetTimePercent(0, { jump: true }),
         { once: true },
       );
     }

@@ -10,7 +10,7 @@
 
   // Store the props so we know when things change
   let lastPropsString = '';
-  
+
   $: {
     if (scrollyVideoContainer) {
       // separate out the videoPercentage prop
@@ -30,6 +30,11 @@
         scrollyVideo.setTargetTimePercent(videoPercentage);
       }
     }
+  }
+
+  // export setTargetTimePercent for use in implementations
+  export function setTargetTimePercent(...args) {
+    scrollyVideo.setTargetTimePercent(...args);
   }
 
   // Cleanup the component on destroy
