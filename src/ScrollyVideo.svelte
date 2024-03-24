@@ -41,6 +41,11 @@
     }
   }
 
+  // export setTargetTimePercent for use in implementations
+  export function setTargetTimePercent(...args) {
+    scrollyVideo.setTargetTimePercent(...args);
+  }
+
   // Cleanup the component on destroy
   onDestroy(() => {
     if (scrollyVideo && scrollyVideo.destroy) scrollyVideo.destroy();

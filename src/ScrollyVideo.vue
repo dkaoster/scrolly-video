@@ -20,6 +20,9 @@ export default {
         ...props,
       });
     },
+    setTargetTimePercent(...args) {
+      if (this.scrollyVideo) this.scrollyVideo.setTargetTimePercent(...args);
+    }
   },
   watch: {
     $attrs: {

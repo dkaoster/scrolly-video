@@ -97,6 +97,9 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
   useImperativeHandle(
     ref,
     () => ({
+      setTargetTimePercent: scrollyVideoRef.current
+        ? scrollyVideoRef.current.setTargetTimePercent.bind(instance)
+        : () => {},
       setScrollPercent: scrollyVideoRef.current
         ? scrollyVideoRef.current.setScrollPercent.bind(instance)
         : () => {},
