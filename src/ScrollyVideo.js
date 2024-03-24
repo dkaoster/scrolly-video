@@ -475,6 +475,11 @@ class ScrollyVideo {
    * @param percentage
    */
   setScrollPercent(percentage) {
+    if (!this.trackScroll) {
+      console.warn('`setScrollPercent` requires enabled `trackScroll`');
+      return;
+    }
+
     const parent = this.container.parentNode;
     const { top, height } = parent.getBoundingClientRect();
 

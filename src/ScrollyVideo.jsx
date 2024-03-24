@@ -24,7 +24,6 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
 ) {
   const containerElement = useRef(null);
   const scrollyVideoRef = useRef(null);
-
   const [instance, setInstance] = useState(null);
 
   const videoPercentageRef = useRef(videoPercentage);
@@ -107,7 +106,7 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
     [instance],
   );
 
-  return <div ref={containerElement} />;
+  return <div ref={containerElement} data-scrolly-container />;
 });
 
 export default ScrollyVideoComponent;
