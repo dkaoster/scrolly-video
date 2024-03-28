@@ -470,6 +470,30 @@ class ScrollyVideo {
   }
 
   /**
+   * Simulate trackScroll programmatically (scrolls on page by percentage of video)
+   *
+   * @param percentage
+   */
+  setScrollPercent(percentage) {
+    if (!this.trackScroll) {
+      console.warn('`setScrollPercent` requires enabled `trackScroll`');
+      return;
+    }
+
+    const parent = this.container.parentNode;
+    const { top, height } = parent.getBoundingClientRect();
+
+    // eslint-disable-next-line no-undef
+    const startPoint = top + window.pageYOffset;
+    // eslint-disable-next-line no-undef
+    const containerHeightInViewport = height - window.innerHeight;
+    const targetPoint = startPoint + containerHeightInViewport * percentage;
+
+    // eslint-disable-next-line no-undef
+    window.scrollTo({ top: targetPoint });
+  }
+
+  /**
    * Call to destroy this ScrollyVideo object
    */
   destroy() {

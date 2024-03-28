@@ -1,9 +1,9 @@
 import React, {
   forwardRef,
   useEffect,
-  useImperativeHandle,
-  useRef,
   useState,
+  useRef,
+  useImperativeHandle,
 } from 'react';
 import ScrollyVideo from './ScrollyVideo';
 
@@ -75,9 +75,13 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
       videoPercentage >= 0 &&
       videoPercentage <= 1
     ) {
-      scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
+      if (trackScroll) {
+        scrollyVideoRef.current.setScrollPercent(videoPercentage)
+      } else {
+        scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
+      }
     }
-  }, [videoPercentage]);
+  }, [videoPercentage, trackScroll]);
 
   // effect for unmount
   useEffect(
@@ -94,6 +98,9 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
     () => ({
       setTargetTimePercent: scrollyVideoRef.current
         ? scrollyVideoRef.current.setTargetTimePercent.bind(instance)
+        : () => {},
+      setScrollPercent: scrollyVideoRef.current
+        ? scrollyVideoRef.current.setScrollPercent.bind(instance)
         : () => {},
     }),
     [instance],

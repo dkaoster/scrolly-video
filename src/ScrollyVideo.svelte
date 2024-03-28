@@ -26,8 +26,17 @@
       }
 
       // If we need to update the target time percent
-      if (scrollyVideo && typeof videoPercentage === 'number' && videoPercentage >= 0 && videoPercentage <= 1) {
-        scrollyVideo.setTargetTimePercent(videoPercentage);
+      if (
+        scrollyVideo &&
+        typeof videoPercentage === 'number' &&
+        videoPercentage >= 0 &&
+        videoPercentage <= 1
+      ) {
+        if (restProps.trackScroll) {
+          scrollyVideo.setScrollPercent(videoPercentage);
+        } else {
+          scrollyVideo.setTargetTimePercent(videoPercentage);
+        }
       }
     }
   }

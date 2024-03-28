@@ -44,7 +44,11 @@ export default {
           videoPercentage >= 0 &&
           videoPercentage <= 1
         ) {
-          this.scrollyVideo.setTargetTimePercent(videoPercentage);
+          if (restProps.trackScroll) {
+            this.scrollyVideo.setScrollPercent(videoPercentage);
+          } else {
+            this.scrollyVideo.setTargetTimePercent(videoPercentage);
+          }
         }
       },
       deep: true,
