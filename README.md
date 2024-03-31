@@ -85,6 +85,7 @@ Add html code to your html component:
 | trackScroll           | Whether this object should automatically respond to scroll                                               | Boolean          | true    |
 | useWebCodecs          | Whether the library should use the webcodecs method, see below                                           | Boolean          | true    |
 | videoPercentage       | Manually specify the position of the video between 0..1, only used for react, vue, and svelte components | Number           |         |
+| onReady               | The callback when it's ready to scroll                                                                   | VoidFunction     |         |
 | debug                 | Whether to log debug information                                                                         | Boolean          | false   |
 
 Additionally, to set currentTime manually:
