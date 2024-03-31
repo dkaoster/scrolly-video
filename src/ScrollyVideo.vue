@@ -22,7 +22,10 @@ export default {
     },
     setTargetTimePercent(...args) {
       if (this.scrollyVideo) this.scrollyVideo.setTargetTimePercent(...args);
-    }
+    },
+    setScrollPercent(...args) {
+      if (this.scrollyVideo) this.scrollyVideo.setScrollPercent(...args);
+    },
   },
   watch: {
     $attrs: {
