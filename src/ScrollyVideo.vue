@@ -64,5 +64,5 @@ export default {
 </script>
 
 <template>
-  <div ref="containerElement" />
+  <div ref="containerElement" data-scrolly-container />
 </template>
