@@ -13,6 +13,12 @@ import videoDecoder from './videoDecoder';
  * Compatible with React, Svelte, Vue, and plain HTML.
  */
 class ScrollyVideo {
+  get duration() {
+    return this.frames.length && this.frameRate
+      ? this.frames.length / this.frameRate
+      : this.video.duration;
+  }
+
   constructor({
     src, // The src of the video, required
     scrollyVideoContainer, // The dom element or id that this object will be created in, required
@@ -23,6 +29,7 @@ class ScrollyVideo {
     transitionSpeed = 8, // How fast the video transitions between points
     frameThreshold = 0.1, // When to stop the video animation, in seconds
     useWebCodecs = true, // Whether to try using the webcodecs approach
+    onProgress = () => {},
     debug = false, // Whether to print debug stats to the console
   }) {
     // Make sure that we have a DOM
@@ -64,6 +71,7 @@ class ScrollyVideo {
     this.sticky = sticky;
     this.full = full;
     this.trackScroll = trackScroll;
+    this.onProgress = onProgress;
     this.debug = debug;
 
     // Create the initial video object. Even if we are going to use webcodecs,
@@ -369,11 +377,13 @@ class ScrollyVideo {
       if (this.canvas) {
         if (jump) {
           // If jump, we go directly to the frame
-          this.currentTime = this.targetTime;
+          this.setCurrenTime(this.targetTime);
         } else if (easedProgress) {
-          this.currentTime = easedCurrentTime;
+          this.setCurrenTime(easedCurrentTime);
         } else {
-          this.currentTime += transitionForward / (256 / transitionSpeed);
+          this.setCurrenTime(
+            this.currentTime + transitionForward / (256 / transitionSpeed),
+          );
         }
 
         this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
@@ -384,17 +394,19 @@ class ScrollyVideo {
         this.video.pause();
 
         if (easedProgress) {
-          this.currentTime = easedCurrentTime;
+          this.setCurrenTime(easedCurrentTime);
         } else {
-          this.currentTime += transitionForward / (64 / transitionSpeed);
+          this.setCurrenTime(
+            this.currentTime + transitionForward / (64 / transitionSpeed),
+          );
         }
 
         // If jump, we go directly to the frame
         if (jump) {
-          this.currentTime = this.targetTime;
+          this.setCurrenTime(this.targetTime);
         }
 
-        this.video.currentTime = this.currentTime;
+        this.video.currentTime = this.targetTime;
       } else {
         // Otherwise, we play the video and adjust the playbackRate to get a smoother
         // animation effect.
@@ -410,7 +422,7 @@ class ScrollyVideo {
           this.video.play();
         }
         // Set the currentTime to the video's currentTime
-        this.currentTime = this.video.currentTime;
+        this.setCurrenTime(this.video.currentTime);
       }
 
       // Recursively calls ourselves until the animation is done.
@@ -450,11 +462,7 @@ class ScrollyVideo {
   setTargetTimePercent(setPercentage, options = {}) {
     // eslint-disable-next-line
     // The time we want to transition to
-    this.targetTime =
-      Math.max(Math.min(setPercentage, 1), 0) *
-      (this.frames.length && this.frameRate
-        ? this.frames.length / this.frameRate
-        : this.video.duration);
+    this.targetTime = Math.max(Math.min(setPercentage, 1), 0) * this.duration;
 
     // If we are close enough, return early
     if (
@@ -491,6 +499,13 @@ class ScrollyVideo {
 
     // eslint-disable-next-line no-undef
     window.scrollTo({ top: targetPoint });
+  }
+
+  setCurrenTime(currentTime) {
+    this.currentTime = currentTime;
+
+    const progress = Math.floor((currentTime / this.duration) * 100) / 100;
+    this.onProgress(progress);
   }
 
   /**
