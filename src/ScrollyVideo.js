@@ -490,7 +490,7 @@ class ScrollyVideo {
     const targetPoint = startPoint + containerHeightInViewport * percentage;
 
     // eslint-disable-next-line no-undef
-    window.scrollTo({ top: targetPoint });
+    window.scrollTo({ top: targetPoint, behavior: 'smooth' });
   }
 
   /**
