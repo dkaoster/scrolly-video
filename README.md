@@ -87,13 +87,27 @@ Add html code to your html component:
 | videoPercentage       | Manually specify the position of the video between 0..1, only used for react, vue, and svelte components | Number           |         |
 | debug                 | Whether to log debug information                                                                         | Boolean          | false   |
 
-Additionally, to set currentTime manually:
 
-***setTargetTimePercent*** (`percentage: number`, `options: Options`): Pass a progress in between of 0 and 1 that specifies the percentage position of the video. Optionally, to customise experience of separate `setTargetTimePercent` calls you can utilize options:
-- `transitionSpeed`: `number`
-- `easing`: `(progress: number) => number`
+## Additional callbacks
 
-Example: `setTargetTimePercent(0.5, { transitionSpeed: 12, easing: d3.easeLinear })`
+***setTargetTimePercent***
+
+Description: A way to set currentTime manually. Pass a progress in between of 0 and 1 that specifies the percentage position of the video.
+
+Signature: `(percentage: number, options: { transitionSpeed: number, (progress: number) => number }) => void`
+
+Example: `scrollyVideo.setTargetTimePercent(0.5, { transitionSpeed: 12, easing: d3.easeLinear })`
+
+<br/>
+
+***setScrollPercent***
+
+Description: A way to set video currentTime manually based on `trackScroll` i.e. pass a progress in between of 0 and 1 that specifies the percentage position of the video and it will scroll smoothly. Make sure to have `trackScroll` enabled.
+
+Signature: `(percentage: number) => void`
+
+Example: `scrollyVideo.setScrollPercent(0.5)`
+
 
 ## Technical Details and Cross Browser Differences
 To make this library perform optimally in all browsers, three different approaches are taken to animating the video.
