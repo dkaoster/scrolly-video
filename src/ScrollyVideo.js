@@ -23,6 +23,7 @@ class ScrollyVideo {
     transitionSpeed = 8, // How fast the video transitions between points
     frameThreshold = 0.1, // When to stop the video animation, in seconds
     useWebCodecs = true, // Whether to try using the webcodecs approach
+    onReady = () => {}, // A callback that invokes on video decode
     debug = false, // Whether to print debug stats to the console
   }) {
     // Make sure that we have a DOM
@@ -62,8 +63,8 @@ class ScrollyVideo {
     this.useWebCodecs = useWebCodecs;
     this.cover = cover;
     this.sticky = sticky;
-    this.full = full;
     this.trackScroll = trackScroll;
+    this.onReady = onReady;
     this.debug = debug;
 
     // Create the initial video object. Even if we are going to use webcodecs,
@@ -212,51 +213,66 @@ class ScrollyVideo {
   /**
    * Uses webCodecs to decode the video into frames
    */
-  decodeVideo() {
-    if (this.useWebCodecs && this.src) {
-      videoDecoder(
+  async decodeVideo() {
+    if (!this.useWebCodecs) {
+      if (this.debug)
+        console.warn('Cannot perform video decode: `useWebCodes` disabled');
+
+      return;
+    }
+
+    if (!this.src) {
+      if (this.debug)
+        console.warn('Cannot perform video decode: no `src` found');
+
+      return;
+    }
+
+    try {
+      await videoDecoder(
         this.src,
         (frame) => {
           this.frames.push(frame);
         },
         this.debug,
-      )
-        .catch(() => {
-          if (this.debug)
-            console.error('Error encountered while decoding video');
-          // Remove all decoded frames if a failure happens during decoding
-          this.frames = [];
+      );
+    } catch (error) {
+      if (this.debug)
+        console.error('Error encountered while decoding video', error);
 
-          // Force a video reload when videoDecoder fails
-          this.video.load();
-        })
-        .then(() => {
-          // If no frames, something went wrong
-          if (this.frames.length === 0) {
-            if (this.debug)
-              console.error('No frames were received from webCodecs');
-            return;
-          }
+      // Remove all decoded frames if a failure happens during decoding
+      this.frames = [];
 
-          // Calculate the frameRate based on number of frames and the duration
-          this.frameRate = this.frames.length / this.video.duration;
-          if (this.debug)
-            console.info('Received', this.frames.length, 'frames');
-
-          // Remove the video and add the canvas
-          // eslint-disable-next-line no-undef
-          this.canvas = document.createElement('canvas');
-          this.context = this.canvas.getContext('2d');
-
-          // Hide the video and add the canvas to the container
-          this.video.style.display = 'none';
-          this.container.appendChild(this.canvas);
-          if (this.cover) this.setCoverStyle(this.canvas);
-
-          // Paint our first frame
-          this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
-        });
+      // Force a video reload when videoDecoder fails
+      this.video.load();
     }
+
+    // If no frames, something went wrong
+    if (this.frames.length === 0) {
+      if (this.debug) console.error('No frames were received from webCodecs');
+
+      this.onReady();
+      return;
+    }
+
+    // Calculate the frameRate based on number of frames and the duration
+    this.frameRate = this.frames.length / this.video.duration;
+    if (this.debug) console.info('Received', this.frames.length, 'frames');
+
+    // Remove the video and add the canvas
+    // eslint-disable-next-line no-undef
+    this.canvas = document.createElement('canvas');
+    this.context = this.canvas.getContext('2d');
+
+    // Hide the video and add the canvas to the container
+    this.video.style.display = 'none';
+    this.container.appendChild(this.canvas);
+    if (this.cover) this.setCoverStyle(this.canvas);
+
+    // Paint our first frame
+    this.paintCanvasFrame(Math.floor(this.currentTime * this.frameRate));
+
+    this.onReady();
   }
 
   /**
