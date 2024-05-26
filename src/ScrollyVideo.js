@@ -1,5 +1,6 @@
 import UAParser from 'ua-parser-js';
 import videoDecoder from './videoDecoder';
+import { debounce, isScrollPositionAtTarget } from './utils';
 
 /**
  *   ____                 _ _     __     ___     _
@@ -20,10 +21,12 @@ class ScrollyVideo {
     sticky = true, // Whether the video should "stick" to the top of the container
     full = true, // Whether the container should expand to 100vh and 100vw
     trackScroll = true, // Whether this object should automatically respond to scroll
+    lockScroll = true, // Whether it ignores human scroll while it runs `setVideoPercentage` with enabled `trackScroll`
     transitionSpeed = 8, // How fast the video transitions between points
     frameThreshold = 0.1, // When to stop the video animation, in seconds
     useWebCodecs = true, // Whether to try using the webcodecs approach
     onReady = () => {}, // A callback that invokes on video decode
+    onChange = () => {}, // A callback that invokes on video percentage change
     debug = false, // Whether to print debug stats to the console
   }) {
     // Make sure that we have a DOM
@@ -65,6 +68,7 @@ class ScrollyVideo {
     this.sticky = sticky;
     this.trackScroll = trackScroll;
     this.onReady = onReady;
+    this.onChange = onChange;
     this.debug = debug;
 
     // Create the initial video object. Even if we are going to use webcodecs,
@@ -114,6 +118,13 @@ class ScrollyVideo {
     this.frames = []; // The frames decoded by webCodecs
     this.frameRate = 0; // Calculation of frameRate so we know which frame to paint
 
+    const debouncedScroll = debounce(() => {
+      // eslint-disable-next-line no-undef
+      window.requestAnimationFrame(() => {
+        this.setScrollPercent(this.videoPercentage);
+      });
+    }, 100);
+
     // Add scroll listener for responding to scroll position
     this.updateScrollPercentage = (jump) => {
       // Used for internally setting the scroll percentage based on built-in listeners
@@ -126,10 +137,18 @@ class ScrollyVideo {
         // eslint-disable-next-line no-undef
         (containerBoundingClientRect.height - window.innerHeight);
 
-      if (this.debug) console.info('ScrollyVideo scrolled to', scrollPercent);
+      if (this.debug) {
+        console.info('ScrollyVideo scrolled to', scrollPercent);
+      }
 
-      // Set the target time percent
-      this.setTargetTimePercent(scrollPercent, { jump });
+      if (this.targetScrollPosition == null) {
+        this.setTargetTimePercent(scrollPercent, { jump });
+        this.onChange(scrollPercent);
+      } else if (isScrollPositionAtTarget(this.targetScrollPosition)) {
+        this.targetScrollPosition = null;
+      } else if (lockScroll && this.targetScrollPosition != null) {
+        debouncedScroll();
+      }
     };
 
     // Add our event listeners for handling changes to the window or scroll
@@ -166,6 +185,32 @@ class ScrollyVideo {
 
     // Calls decode video to attempt webcodecs method
     this.decodeVideo();
+  }
+
+  /**
+   * Sets the currentTime of the video as a specified percentage of its total duration.
+   *
+   * @param percentage - The percentage of the video duration to set as the current time.
+   * @param options - Configuration options for adjusting the video playback.
+   *    - jump: boolean - If true, the video currentTime will jump directly to the specified percentage. If false, the change will be animated over time.
+   *    - transitionSpeed: number - Defines the speed of the transition when `jump` is false. Represents the duration of the transition in milliseconds. Default is 8.
+   *    - easing: (progress: number) => number - A function that defines the easing curve for the transition. It takes the progress ratio (a number between 0 and 1) as an argument and returns the eased value, affecting the playback speed during the transition.
+   */
+  setVideoPercentage(percentage, options = {}) {
+    if (this.transitioningRaf) {
+      // eslint-disable-next-line no-undef
+      window.cancelAnimationFrame(this.transitioningRaf);
+    }
+
+    this.videoPercentage = percentage;
+
+    this.onChange(percentage);
+
+    if (this.trackScroll) {
+      this.setScrollPercent(percentage);
+    }
+
+    this.setTargetTimePercent(percentage, options);
   }
 
   /**
@@ -281,35 +326,32 @@ class ScrollyVideo {
    * @param frameNum
    */
   paintCanvasFrame(frameNum) {
-    if (this.canvas) {
-      // Get the frame and paint it to the canvas
-      const currFrame = this.frames[frameNum];
-      if (currFrame) {
-        if (this.debug) console.info('Painting frame', frameNum);
+    // Get the frame and paint it to the canvas
+    const currFrame = this.frames[frameNum];
 
-        // Make sure the canvas is scaled properly, similar to setCoverStyle
-        this.canvas.width = currFrame.width;
-        this.canvas.height = currFrame.height;
-        const { width, height } = this.container.getBoundingClientRect();
-
-        if (width / height > currFrame.width / currFrame.height) {
-          this.canvas.style.width = '100%';
-          this.canvas.style.height = 'auto';
-        } else {
-          this.canvas.style.height = '100%';
-          this.canvas.style.width = 'auto';
-        }
-
-        // Draw the frame to the canvas context
-        this.context.drawImage(
-          currFrame,
-          0,
-          0,
-          currFrame.width,
-          currFrame.height,
-        );
-      }
+    if (!this.canvas || !currFrame) {
+      return;
     }
+
+    if (this.debug) {
+      console.info('Painting frame', frameNum);
+    }
+
+    // Make sure the canvas is scaled properly, similar to setCoverStyle
+    this.canvas.width = currFrame.width;
+    this.canvas.height = currFrame.height;
+    const { width, height } = this.container.getBoundingClientRect();
+
+    if (width / height > currFrame.width / currFrame.height) {
+      this.canvas.style.width = '100%';
+      this.canvas.style.height = 'auto';
+    } else {
+      this.canvas.style.height = '100%';
+      this.canvas.style.width = 'auto';
+    }
+
+    // Draw the frame to the canvas context
+    this.context.drawImage(currFrame, 0, 0, currFrame.width, currFrame.height);
   }
 
   /**
@@ -457,20 +499,19 @@ class ScrollyVideo {
   /**
    * Sets the currentTime of the video as a specified percentage of its total duration.
    *
-   * @param setPercentage - The percentage of the video duration to set as the current time.
+   * @param percentage - The percentage of the video duration to set as the current time.
    * @param options - Configuration options for adjusting the video playback.
    *    - jump: boolean - If true, the video currentTime will jump directly to the specified percentage. If false, the change will be animated over time.
    *    - transitionSpeed: number - Defines the speed of the transition when `jump` is false. Represents the duration of the transition in milliseconds. Default is 8.
    *    - easing: (progress: number) => number - A function that defines the easing curve for the transition. It takes the progress ratio (a number between 0 and 1) as an argument and returns the eased value, affecting the playback speed during the transition.
    */
-  setTargetTimePercent(setPercentage, options = {}) {
-    // eslint-disable-next-line
-    // The time we want to transition to
-    this.targetTime =
-      Math.max(Math.min(setPercentage, 1), 0) *
-      (this.frames.length && this.frameRate
+  setTargetTimePercent(percentage, options = {}) {
+    const targetDuration =
+      this.frames.length && this.frameRate
         ? this.frames.length / this.frameRate
-        : this.video.duration);
+        : this.video.duration;
+    // The time we want to transition to
+    this.targetTime = Math.max(Math.min(percentage, 1), 0) * targetDuration;
 
     // If we are close enough, return early
     if (
@@ -503,10 +544,15 @@ class ScrollyVideo {
     const startPoint = top + window.pageYOffset;
     // eslint-disable-next-line no-undef
     const containerHeightInViewport = height - window.innerHeight;
-    const targetPoint = startPoint + containerHeightInViewport * percentage;
+    const targetPosition = startPoint + containerHeightInViewport * percentage;
 
-    // eslint-disable-next-line no-undef
-    window.scrollTo({ top: targetPoint, behavior: 'smooth' });
+    if (isScrollPositionAtTarget(targetPosition)) {
+      this.targetScrollPosition = null;
+    } else {
+      // eslint-disable-next-line no-undef
+      window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      this.targetScrollPosition = targetPosition;
+    }
   }
 
   /**

@@ -16,6 +16,7 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
     sticky,
     full,
     trackScroll,
+    lockScroll,
     useWebCodecs,
     videoPercentage,
     debug,
@@ -51,6 +52,7 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
       sticky,
       full,
       trackScroll,
+      lockScroll,
       useWebCodecs,
       debug,
       videoPercentage: videoPercentageRef.current,
@@ -67,6 +69,7 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
     sticky,
     full,
     trackScroll,
+    lockScroll,
     useWebCodecs,
     debug,
   ]);
@@ -80,13 +83,9 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
       videoPercentage >= 0 &&
       videoPercentage <= 1
     ) {
-      if (trackScroll) {
-        scrollyVideoRef.current.setScrollPercent(videoPercentage)
-      } else {
-        scrollyVideoRef.current.setTargetTimePercent(videoPercentage);
-      }
+      scrollyVideoRef.current.setVideoPercentage(videoPercentage);
     }
-  }, [videoPercentage, trackScroll]);
+  }, [videoPercentage]);
 
   // effect for unmount
   useEffect(
@@ -101,11 +100,8 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
   useImperativeHandle(
     ref,
     () => ({
-      setTargetTimePercent: scrollyVideoRef.current
-        ? scrollyVideoRef.current.setTargetTimePercent.bind(instance)
-        : () => {},
-      setScrollPercent: scrollyVideoRef.current
-        ? scrollyVideoRef.current.setScrollPercent.bind(instance)
+      setVideoPercentage: scrollyVideoRef.current
+        ? scrollyVideoRef.current.setVideoPercentage.bind(instance)
         : () => {},
     }),
     [instance],
