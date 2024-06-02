@@ -32,23 +32,14 @@
         videoPercentage >= 0 &&
         videoPercentage <= 1
       ) {
-        if (restProps.trackScroll) {
-          scrollyVideo.setScrollPercent(videoPercentage);
-        } else {
-          scrollyVideo.setTargetTimePercent(videoPercentage);
-        }
+        scrollyVideo.setVideoPercentage(videoPercentage);
       }
     }
   }
 
-  // export setTargetTimePercent for use in implementations
-  export function setTargetTimePercent(...args) {
-    scrollyVideo.setTargetTimePercent(...args);
-  }
-
-  // export setScrollPercent for use in implementations
-  export function setScrollPercent(...args) {
-    scrollyVideo.setScrollPercent(...args);
+  // export setVideoPercentage for use in implementations
+  export function setVideoPercentage(...args) {
+    scrollyVideo.setVideoPercentage(...args);
   }
 
   // Cleanup the component on destroy

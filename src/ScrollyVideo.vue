@@ -20,11 +20,8 @@ export default {
         ...props,
       });
     },
-    setTargetTimePercent(...args) {
-      if (this.scrollyVideo) this.scrollyVideo.setTargetTimePercent(...args);
-    },
-    setScrollPercent(...args) {
-      if (this.scrollyVideo) this.scrollyVideo.setScrollPercent(...args);
+    setVideoPercentage(...args) {
+      if (this.scrollyVideo) this.scrollyVideo.setVideoPercentage(...args);
     },
   },
   watch: {
@@ -47,11 +44,7 @@ export default {
           videoPercentage >= 0 &&
           videoPercentage <= 1
         ) {
-          if (restProps.trackScroll) {
-            this.scrollyVideo.setScrollPercent(videoPercentage);
-          } else {
-            this.scrollyVideo.setTargetTimePercent(videoPercentage);
-          }
+          this.scrollyVideo.setVideoPercentage(videoPercentage);
         }
       },
       deep: true,
