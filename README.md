@@ -83,31 +83,23 @@ Add html code to your html component:
 | sticky                | Whether the video should have `position: sticky`                                                         | Boolean          | true    |
 | full                  | Whether the video should take up the entire viewport                                                     | Boolean          | true    |
 | trackScroll           | Whether this object should automatically respond to scroll                                               | Boolean          | true    |
+| lockScroll            | Whether it ignores human scroll while it runs `setVideoPercentage` with enabled `trackScroll`            | Boolean          | true    |
 | useWebCodecs          | Whether the library should use the webcodecs method, see below                                           | Boolean          | true    |
 | videoPercentage       | Manually specify the position of the video between 0..1, only used for react, vue, and svelte components | Number           |         |
 | onReady               | The callback when it's ready to scroll                                                                   | VoidFunction     |         |
+| onChange              | The callback for video percentage change                                                                 | VoidFunction     |         |
 | debug                 | Whether to log debug information                                                                         | Boolean          | false   |
 
 
 ## Additional callbacks
 
-***setTargetTimePercent***
+***setVideoPercentage***
 
-Description: A way to set currentTime manually. Pass a progress in between of 0 and 1 that specifies the percentage position of the video.
+Description: A way to set currentTime manually. Pass a progress in between of 0 and 1 that specifies the percentage position of the video. If `trackScroll` enabled - it performs scroll automatically.
 
 Signature: `(percentage: number, options: { transitionSpeed: number, (progress: number) => number }) => void`
 
-Example: `scrollyVideo.setTargetTimePercent(0.5, { transitionSpeed: 12, easing: d3.easeLinear })`
-
-<br/>
-
-***setScrollPercent***
-
-Description: A way to set video currentTime manually based on `trackScroll` i.e. pass a progress in between of 0 and 1 that specifies the percentage position of the video and it will scroll smoothly. Make sure to have `trackScroll` enabled.
-
-Signature: `(percentage: number) => void`
-
-Example: `scrollyVideo.setScrollPercent(0.5)`
+Example: `scrollyVideo.setVideoPercentage(0.5, { transitionSpeed: 12, easing: d3.easeLinear })`
 
 
 ## Technical Details and Cross Browser Differences
