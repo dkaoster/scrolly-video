@@ -84,6 +84,9 @@ class ScrollyVideo {
     this.video.pause();
     this.video.load();
 
+    // Start the video percentage at 0
+    this.videoPercentage = 0;
+
     // Adds the video to the container
     this.container.appendChild(this.video);
 
@@ -197,6 +200,9 @@ class ScrollyVideo {
    *    - easing: (progress: number) => number - A function that defines the easing curve for the transition. It takes the progress ratio (a number between 0 and 1) as an argument and returns the eased value, affecting the playback speed during the transition.
    */
   setVideoPercentage(percentage, options = {}) {
+    // Early termination if the video percentage is already at the percentage that is intended.
+    if (this.videoPercentage === percentage) return;
+
     if (this.transitioningRaf) {
       // eslint-disable-next-line no-undef
       window.cancelAnimationFrame(this.transitioningRaf);
