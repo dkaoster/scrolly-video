@@ -21,6 +21,7 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
     videoPercentage,
     debug,
     onReady,
+    onChange,
   },
   ref,
 ) {
@@ -33,6 +34,9 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
 
   const onReadyRef = useRef(onReady);
   onReadyRef.current = onReady;
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   // effect for destroy and recreate on props change (except video percentage)
   useEffect(() => {
@@ -55,8 +59,9 @@ const ScrollyVideoComponent = forwardRef(function ScrollyVideoComponent(
       lockScroll,
       useWebCodecs,
       debug,
-      videoPercentage: videoPercentageRef.current,
       onReady: onReadyRef.current,
+      onChange: onChangeRef.current,
+      videoPercentage: videoPercentageRef.current,
     });
 
     setInstance(scrollyVideo);
