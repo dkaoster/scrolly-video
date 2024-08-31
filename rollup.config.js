@@ -7,7 +7,7 @@ import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
-import sveltePreprocess from 'svelte-preprocess';
+import { sveltePreprocess } from 'svelte-preprocess';
 import { spawn } from 'child_process';
 
 const docsSite = process.env.DOCS_SITE === 'true';
@@ -17,7 +17,9 @@ const production = !watch;
 const serve = () => {
   let server;
 
-  const toExit = () => { if (server) server.kill(0); };
+  const toExit = () => {
+    if (server) server.kill(0);
+  };
 
   return {
     writeBundle() {
@@ -63,11 +65,12 @@ export default [
 
       // If we're building for production (npm run build
       // instead of npm run dev), minify
-      production && terser({
-        output: {
-          comments: false,
-        },
-      }),
+      production &&
+        terser({
+          output: {
+            comments: false,
+          },
+        }),
     ],
   },
   // The react component needs to be built
@@ -126,7 +129,10 @@ export default [
       copy({
         targets: [
           // The public folder for development
-          { src: ['static/**/*', 'static/.nojekyll', 'README.md'], dest: 'build' },
+          {
+            src: ['static/**/*', 'static/.nojekyll', 'README.md'],
+            dest: 'build',
+          },
         ],
       }),
 
@@ -135,7 +141,7 @@ export default [
           sourceMap: !production,
         }),
         compilerOptions: {
-        // enable run-time checks when not in production
+          // enable run-time checks when not in production
           dev: !production,
         },
       }),
@@ -164,10 +170,12 @@ export default [
 
       // If we're building for production (npm run build
       // instead of npm run dev), minify
-      production && terser({
-        output: {
-          comments: false,
-        },
-      }),
+      production &&
+        terser({
+          output: {
+            comments: false,
+          },
+        }),
     ],
-  }].filter((d) => d);
+  },
+].filter((d) => d);
