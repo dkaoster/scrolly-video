@@ -7,11 +7,11 @@
     "es6": true
   },
   "extends": ["airbnb-base", "plugin:prettier/recommended"],
-  "plugins": ["svelte3", "prettier"],
+  "plugins": ["svelte", "prettier"],
   "overrides": [
     {
       "files": ["**/*.svelte"],
-      "processor": "svelte3/svelte3"
+      "parser": "svelte-eslint-parser"
     }
   ],
   "rules": {

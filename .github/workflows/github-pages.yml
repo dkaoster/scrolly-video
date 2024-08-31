@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js 🔧
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
 
       # This example project is built using npm and outputs the result to the 'build'
       # folder. Replace with the commands required to build your project, or remove
