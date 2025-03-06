@@ -1,7 +1,7 @@
 ---
-let {
+const {
   src, // The src of the video, required
-  scrollyVideoContainer, // The dom element or id that this object will be created in, required
+  scrollyVideoContainer = 'scrolly-video', // The dom element or id that this object will be created in, required
   cover = true, // Whether the video should "cover" inside the container
   sticky = true, // Whether the video should "stick" to the top of the container
   full = true, // Whether the container should expand to 100vh and 100vw
@@ -16,7 +16,7 @@ let {
 } = Astro.props;
 ---
 
-<video id=`${Astro.props.scrollyVideoContainer}` src=`${Astro.props.src}`></video>
+<div id={Astro.props.scrollyVideoContainer}></div>
 
 <script>
   import ScrollyVideoComponent from './ScrollyVideo';
