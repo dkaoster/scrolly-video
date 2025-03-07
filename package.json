@@ -54,7 +54,7 @@
     "eslint-plugin-svelte": "^2.43.0",
     "prettier": "^3.2.4",
     "rimraf": "^3.0.2",
-    "rollup": "^2.46.0",
+    "rollup": "^3.29.5",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
