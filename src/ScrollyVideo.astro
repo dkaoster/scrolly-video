@@ -1,0 +1,25 @@
+---
+const {
+  src, // The src of the video, required
+  scrollyVideoContainer = 'scrolly-video', // The dom element or id that this object will be created in, required
+  cover = true, // Whether the video should "cover" inside the container
+  sticky = true, // Whether the video should "stick" to the top of the container
+  full = true, // Whether the container should expand to 100vh and 100vw
+  trackScroll = true, // Whether this object should automatically respond to scroll
+  lockScroll = true, // Whether it ignores human scroll while it runs `setVideoPercentage` with enabled `trackScroll`
+  transitionSpeed = 8, // How fast the video transitions between points
+  frameThreshold = 0.1, // When to stop the video animation, in seconds
+  useWebCodecs = true, // Whether to try using the webcodecs approach
+  onReady = () => {}, // A callback that invokes on video decode
+  onChange = () => {}, // A callback that invokes on video percentage change
+  debug = false, // Whether to print debug stats to the console
+} = Astro.props;
+---
+
+<div id={Astro.props.scrollyVideoContainer}></div>
+
+<script>
+  import ScrollyVideoComponent from './ScrollyVideo';
+
+  new ScrollyVideoComponent({ ...Astro.props });
+</script>

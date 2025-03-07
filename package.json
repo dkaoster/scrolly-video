@@ -25,7 +25,8 @@
     "video",
     "svelte",
     "react",
-    "vue"
+    "vue",
+    "astro"
   ],
   "author": "Daniel Kao",
   "license": "MIT",
