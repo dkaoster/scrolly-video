@@ -71,6 +71,19 @@ Add html code to your html component:
 <ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
 ```
 
+## 🔵 Astro
+
+Install npm module with `npm install scrolly-video --save`: 
+Import component in your frontmatter:
+
+```javascript
+import ScrollyVideo from 'scrolly-video/dist/ScrollyVideo.astro';
+```
+
+```html
+<ScrollyVideo src="https://scrollyvideo.js.org/goldengate.mp4" />
+```
+
 ## 🧰 Options / Attributes
 
 | Parameter             | Description                                                                                              | Values           | Default |
