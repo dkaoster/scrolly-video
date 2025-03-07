@@ -5,7 +5,7 @@ import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import css from 'rollup-plugin-css-only';
 import { sveltePreprocess } from 'svelte-preprocess';
 import { spawn } from 'child_process';
